@@ -1,0 +1,7 @@
+{
+  "name": "Readcycle",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

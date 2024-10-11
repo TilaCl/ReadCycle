@@ -1,0 +1,37 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="readcyclecolor">
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div *ngIf="user">
+    <h2>Información del Usuario</h2>
+
+    <p><strong>ID:</strong> {{ user.id }}</p> <!-- ID del usuario -->
+    <p><strong>Nombre:</strong> {{ user.name }}</p> <!-- Nombre del usuario -->
+    <p><strong>Email:</strong> {{ user.email }}</p> <!-- Correo del usuario -->
+    <img [src]="user.photo" alt="Foto de perfil" />
+
+    <p><strong>Nickname:</strong> {{ nickname }}</p> <!-- Mostrar el nickname -->
+    <p><strong>Número de Teléfono:</strong> {{ celular }}</p> <!-- Mostrar el número de teléfono -->
+
+    <ion-item>
+      <ion-label>Modificar Nickname</ion-label>
+      <ion-input [(ngModel)]="nickname" placeholder="Ingrese su nickname"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label >Modificar Número de Teléfono</ion-label>
+      <ion-input [(ngModel)]="celular" placeholder="Ingrese su número de teléfono"></ion-input>
+    </ion-item>
+
+    <ion-button (click)="updateUser()" expand="full" color="primary">
+      Actualizar Información
+    </ion-button>
+
+    <ion-button (click)="logout()" expand="full" color="danger" style="margin-top: 10px;">
+      Cerrar Sesión
+    </ion-button>
+  </div>
+</ion-content>

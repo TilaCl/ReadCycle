@@ -1,0 +1,25 @@
+// For information on how to create your own theme, please see:
+// http://ionicframework.com/docs/theming/
+
+
+:root {
+	--ion-color-readcyclecolor: #FAB169;
+	--ion-color-readcyclecolor-rgb: 250,177,105;
+	--ion-color-readcyclecolor-contrast: #ffffff;
+	--ion-color-readcyclecolor-contrast-rgb: rgb(37, 37, 37);
+	--ion-color-readcyclecolor-shade: #dc9c5c;
+	--ion-color-readcyclecolor-tint: #fbb978;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-color-readcyclecolor: #FAB169;
+    --ion-color-readcyclecolor-rgb: 250,177,105;
+    --ion-color-readcyclecolor-contrast: #181818; /* Contraste para el modo oscuro */
+    --ion-color-readcyclecolor-contrast-rgb: rgb(0, 0, 0); /* Contraste en modo oscuro */
+    --ion-color-readcyclecolor-shade: #dc9c5c;
+    --ion-color-readcyclecolor-tint: #fbb978;
+	--ion-background-color: #2a2a2a;
+  }
+}
