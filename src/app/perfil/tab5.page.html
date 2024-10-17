@@ -5,33 +5,47 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div *ngIf="user">
-    <h2>Información del Usuario</h2>
+  <div *ngIf="user" class="ion-padding">
+    <ion-card style="text-align: center; padding-top: 5%; border-radius: 3%;" >
+    <img [src]="user.photo" alt="Foto de perfil" style="border-radius: 50%; width: 150px;"  />
 
-    <p><strong>ID:</strong> {{ user.id }}</p> <!-- ID del usuario -->
+    <!-- <p><strong>ID:</strong> {{ user.id }}</p> ID del usuario -->
     <p><strong>Nombre:</strong> {{ user.name }}</p> <!-- Nombre del usuario -->
     <p><strong>Email:</strong> {{ user.email }}</p> <!-- Correo del usuario -->
-    <img [src]="user.photo" alt="Foto de perfil" />
-
     <p><strong>Nickname:</strong> {{ nickname }}</p> <!-- Mostrar el nickname -->
     <p><strong>Número de Teléfono:</strong> {{ celular }}</p> <!-- Mostrar el número de teléfono -->
 
-    <ion-item>
-      <ion-label>Modificar Nickname</ion-label>
-      <ion-input [(ngModel)]="nickname" placeholder="Ingrese su nickname"></ion-input>
-    </ion-item>
 
-    <ion-item>
-      <ion-label >Modificar Número de Teléfono</ion-label>
-      <ion-input [(ngModel)]="celular" placeholder="Ingrese su número de teléfono"></ion-input>
-    </ion-item>
 
-    <ion-button (click)="updateUser()" expand="full" color="primary">
-      Actualizar Información
+    <ion-button (click)="updateUser()"  color="danger" fill="outline">
+      Editar Perfil
     </ion-button>
-
-    <ion-button (click)="logout()" expand="full" color="danger" style="margin-top: 10px;">
+    <br>
+    <ion-button (click)="updateUser()" color="primary" fill="solid">
+      Donar
+    </ion-button>
+    <img src="https://i.ibb.co/QrfXWw9/corona.png" style="width: 30px; position: relative; bottom: -15px;" alt="">
+    <p style="font-size: medium;">¡Elimina anuncios!</p>
+    
+    <ion-button (click)="logout()"  color="danger" style="margin-top: 10px; padding: 10%;" >
       Cerrar Sesión
     </ion-button>
+    
+    </ion-card>
+    
+
   </div>
 </ion-content>
+
+
+
+<!--
+<ion-item>
+  <ion-label>Modificar Nombre de usuario</ion-label>
+  <ion-input [(ngModel)]="nickname" placeholder="Ingrese su nickname"></ion-input>
+</ion-item>
+
+<ion-item>
+  <ion-label >Modificar Número de Teléfono</ion-label>
+  <ion-input [(ngModel)]="celular" placeholder="Ingrese su número de teléfono"></ion-input>
+</ion-item>-->
