@@ -6,3 +6,27 @@
 	--ion-color-shade: var(--ion-color-readcyclecolor-shade);
 	--ion-color-tint: var(--ion-color-readcyclecolor-tint);
 }
+
+.button-container {
+	display: flex;
+	flex-direction: column; /* Asegúrate de que los botones se apilen verticalmente */
+	align-items: center; /* Centrar horizontalmente */
+	justify-content: center; /* Centrar verticalmente */
+	height: 100%; /* Esto puede ayudar a centrar los botones en el espacio disponible */
+  }
+  
+  .custom-button {
+	width: 200px; /* Establece un ancho fijo para que ambos botones tengan la misma longitud */
+	height: 60px; /* Ajusta la altura para hacerlos más cuadrados */
+	border-radius: 15px; /* Puedes ajustar esto para el redondeo de las esquinas */
+	margin: 10px 0; /* Espacio entre los botones */
+  }
+  
+  ion-button {
+	font-size: 18px; // Aumentar el tamaño de fuente
+	height: 60px; // Aumentar la altura del botón
+  }
+
+
+
+  
