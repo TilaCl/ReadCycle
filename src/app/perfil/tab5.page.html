@@ -5,33 +5,51 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div *ngIf="user">
-    <h2>Información del Usuario</h2>
+  <div *ngIf="user" class="ion-padding">
+    <ion-card style="text-align: center;	padding-top: 5%; border-radius: 3%;">
+      <!-- Botón de la imagen de perfil -->
+      <button style="border-radius: 45%; background-color: #fab169;" (click)="fileInput.click()">
+        <img [src]="user.photo" alt="Foto de perfil" style="border-radius: 50%;width: 150px;height: 150px; "/>
+      </button>
+      <!-- Input oculto para subir la nueva imagen -->
+      <input type="file" hidden #fileInput (change)="uploadProfileImage($event)" accept="image/*" />
 
-    <p><strong>ID:</strong> {{ user.id }}</p> <!-- ID del usuario -->
-    <p><strong>Nombre:</strong> {{ user.name }}</p> <!-- Nombre del usuario -->
-    <p><strong>Email:</strong> {{ user.email }}</p> <!-- Correo del usuario -->
-    <img [src]="user.photo" alt="Foto de perfil" />
+      <!-- Información del usuario -->
+      <p><strong>Nombre:</strong> {{ user.name }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Nombre Usuario:</strong> {{ nickname }}</p>
+      <p><strong>Número de Teléfono:</strong> {{ celular }}</p>
 
-    <p><strong>Nickname:</strong> {{ nickname }}</p> <!-- Mostrar el nickname -->
-    <p><strong>Número de Teléfono:</strong> {{ celular }}</p> <!-- Mostrar el número de teléfono -->
+      <!-- Modificar Nombre de Usuario -->
+      <ion-item>
+        <ion-label>Modificar Nombre de usuario</ion-label>
+        <ion-input [(ngModel)]="nickname" placeholder="Nombre de usuario" [counter]="true" maxlength="15"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>Modificar Nickname</ion-label>
-      <ion-input [(ngModel)]="nickname" placeholder="Ingrese su nickname"></ion-input>
-    </ion-item>
+      <!-- Modificar Número de Teléfono -->
+      <ion-item>
+        <ion-label>Modificar Número de Teléfono</ion-label>
+        <ion-input [(ngModel)]="celular" placeholder="Ingrese su número de teléfono" maxlength="12"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label >Modificar Número de Teléfono</ion-label>
-      <ion-input [(ngModel)]="celular" placeholder="Ingrese su número de teléfono"></ion-input>
-    </ion-item>
+      <!-- Botón para actualizar la información del usuario -->
+      <ion-button (click)="updateUser()" color="danger" fill="outline">
+        Editar Perfil
+      </ion-button>
+      <br>
 
-    <ion-button (click)="updateUser()" expand="full" color="primary">
-      Actualizar Información
-    </ion-button>
+      <!-- Botón y Action Sheet para Donar -->
+      <ion-button id="open-action-sheet" color="primary" fill="solid">
+        Donar
+      </ion-button>
+      <ion-action-sheet trigger="open-action-sheet" header="Donando eliminas anuncios!" [buttons]="actionSheetButtons"></ion-action-sheet>
+      <img src="https://i.ibb.co/QrfXWw9/corona.png" style="width: 30px;position: relative;bottom: -15px;" alt="">
+      <p style="font-size: medium;">¡Elimina anuncios!</p>
 
-    <ion-button (click)="logout()" expand="full" color="danger" style="margin-top: 10px;">
-      Cerrar Sesión
-    </ion-button>
+      <!-- Botón para cerrar sesión -->
+      <ion-button (click)="logout()" color="danger" style="	margin-top: 10px; padding: 10%;">
+        Cerrar Sesión
+      </ion-button>
+    </ion-card>
   </div>
 </ion-content>

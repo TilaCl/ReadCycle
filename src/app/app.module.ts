@@ -6,7 +6,7 @@ import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
-
+import { getStorage, provideStorage } from '@angular/fire/storage';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
@@ -20,7 +20,8 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
   [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, 
     provideFirebaseApp(() => initializeApp(environment.firebase)), 
     provideAuth(() => getAuth()), 
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    provideStorage(()=> getStorage())
   ],
   bootstrap: [AppComponent],
 })
