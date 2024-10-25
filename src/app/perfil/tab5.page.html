@@ -9,7 +9,7 @@
     <ion-card style="text-align: center;	padding-top: 5%; border-radius: 3%;">
       <!-- Botón de la imagen de perfil -->
       <button style="border-radius: 45%; background-color: #fab169;" (click)="fileInput.click()">
-        <img [src]="user.photo" alt="Foto de perfil" style="border-radius: 50%;width: 150px;height: 150px; "/>
+        <img [src]="user.photo" alt="Foto de perfil " style="border-radius: 50%;width: 150px;height: 150px; "/>
       </button>
       <!-- Input oculto para subir la nueva imagen -->
       <input type="file" hidden #fileInput (change)="uploadProfileImage($event)" accept="image/*" />
