@@ -6,12 +6,23 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Mis Publicaciones</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-card *ngFor="let publicacion of publicaciones$ | async">
+      <ion-card-header>
+        <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
+        <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Estado:</strong> {{ publicacion.estado }}</p>
+        <p><strong>Correo:</strong> {{ publicacion.correoelectronico }}</p>
+        <p><strong>Teléfono:</strong> {{ publicacion.telefono }}</p>
+        <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
+        <p *ngIf="publicacion.precio"><strong>Precio:</strong> ${{ publicacion.precio }}</p>
+        <p><strong>Año:</strong> {{ publicacion.anio }}</p>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>

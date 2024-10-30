@@ -4,6 +4,7 @@ import { AuthService } from 'src/services/auth.service';
 import { UsuarioService } from 'src/services/usuario.service';
 import { ImageUploadService } from 'src/services/image-upload.service';
 import { ActionSheetController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular'; // Importar ToastController
 
 @Component({
   selector: 'app-tab5',
@@ -46,7 +47,8 @@ export class Tab5Page implements OnInit {
     private usuarioService: UsuarioService,
     private router: Router,
     public actionSheetCtrl: ActionSheetController,
-    private imageUploadService: ImageUploadService
+    private imageUploadService: ImageUploadService,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -95,6 +97,7 @@ export class Tab5Page implements OnInit {
         celular: this.celular,
       });
       console.log('Información actualizada con éxito');
+      this.mostrarToast('Información actualizada correctamente')
     }
   }
 
@@ -103,4 +106,14 @@ export class Tab5Page implements OnInit {
       this.router.navigate(['/login']);
     });
   }
+
+    // Método para mostrar el toast
+    async mostrarToast(mensaje: string) {
+      const toast = await this.toastController.create({
+        message: mensaje,
+        duration: 2000, // Duración de 2 segundos
+        position: 'bottom',
+      });
+      toast.present();
+    }
 }

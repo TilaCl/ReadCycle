@@ -22,92 +22,104 @@
   <div *ngIf="selectedOption === 'venta'">
     <h2>Venta</h2>
 
-    <ion-item>
-      <ion-input label="Título del libro" labelPlacement="floating"></ion-input>
-    </ion-item>
+    <form (ngSubmit)="guardarPublicacion()">
 
-    <ion-item>
-      <ion-input label="Autor" labelPlacement="floating"></ion-input>
-    </ion-item>
 
-    <ion-item>
-      <ion-input label="Género" labelPlacement="floating"></ion-input>
-    </ion-item>
+  
+      <ion-item>
+        <ion-input label="Título del libro" labelPlacement="floating" [(ngModel)]="publicacion.titulolibro" name="titulolibro" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-input label="Autor" labelPlacement="floating" [(ngModel)]="publicacion.autor" name="autor" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-input label="Año" labelPlacement="floating" type="number" maxlength="4" (ionInput)="validateLength($event)"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Género" labelPlacement="floating" [(ngModel)]="publicacion.genero" name="genero" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>Estado</ion-label>
-      <ion-select interface="popover">
-        <ion-select-option value="nuevo">Nuevo</ion-select-option>
-        <ion-select-option value="usado">Usado</ion-select-option>
-        <ion-select-option value="malestado">En mal estado</ion-select-option>
-      </ion-select>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Año" labelPlacement="floating" type="number" maxlength="4" (ionInput)="validateLength($event)" [(ngModel)]="publicacion.anio" name="anio" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-input label="Correo Electrónico" labelPlacement="floating" type="email" placeholder="email@dominio.com"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label>Estado</ion-label>
+        <ion-select interface="popover" [(ngModel)]="publicacion.estado" name="estado" required>
+          <ion-select-option value="Nuevo">Nuevo</ion-select-option>
+          <ion-select-option value="Usado">Usado</ion-select-option>
+          <ion-select-option value="En mal estado">En mal estado</ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <ion-item>
-      <ion-input label="Teléfono celular" labelPlacement="floating" type="tel" placeholder="+569"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Correo Electrónico" labelPlacement="floating" type="email" placeholder="email@dominio.com" [(ngModel)]="publicacion.correoelectronico" name="correoelectronico" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-textarea label="Descripción" labelPlacement="floating" autoGrow="true" style="min-height: 150px;"></ion-textarea>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Teléfono celular" labelPlacement="floating" type="tel" placeholder="+569" [(ngModel)]="publicacion.telefono" name="telefono" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>Precio </ion-label>
-      <ion-input type="number" [(ngModel)]="price"></ion-input>
-    </ion-item>
-    <ion-button expand="full" shape="round" color="readcyclecolor" (click)="submitForm()">Enviar</ion-button>
+      <ion-item>
+        <ion-textarea label="Descripción" labelPlacement="floating" autoGrow="true" style="min-height: 150px;" [(ngModel)]="publicacion.descripcion" name="descripcion" required></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Precio </ion-label>
+        <ion-input type="number" [(ngModel)]="price" [(ngModel)]="publicacion.precio" name="precio" required></ion-input>
+      </ion-item>
+
+    </form>
+    <ion-button expand="full" shape="round" color="readcyclecolor" (click)="guardarPublicacion()">Enviar</ion-button>
     <ion-button expand="full" shape="round" color="medium" (click)="goBack()">Volver</ion-button>
   </div>
 
   <!-- Formulario para Intercambio -->
   <div *ngIf="selectedOption === 'intercambio'">
     <h2>Intercambio</h2>
-    <ion-item>
-      <ion-input label="Título del libro" labelPlacement="floating"></ion-input>
-    </ion-item>
 
-    <ion-item>
-      <ion-input label="Autor" labelPlacement="floating"></ion-input>
-    </ion-item>
+    <form (ngSubmit)="guardarPublicacion()">
 
-    <ion-item>
-      <ion-input label="Género" labelPlacement="floating"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Título del libro" labelPlacement="floating" [(ngModel)]="publicacion.titulolibro" name="titulolibro" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-input label="Año" labelPlacement="floating" type="number" maxlength="4" (ionInput)="validateLength($event)"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Autor" labelPlacement="floating" [(ngModel)]="publicacion.autor" name="autor" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>Estado</ion-label>
-      <ion-select interface="popover">
-        <ion-select-option value="nuevo">Nuevo</ion-select-option>
-        <ion-select-option value="usado">Usado</ion-select-option>
-        <ion-select-option value="malestado">En mal estado</ion-select-option>
-      </ion-select>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Género" labelPlacement="floating" [(ngModel)]="publicacion.genero" name="genero" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-input label="Correo Electrónico" labelPlacement="floating" type="email" placeholder="email@dominio.com"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Año" labelPlacement="floating" type="number" maxlength="4" (ionInput)="validateLength($event)" [(ngModel)]="publicacion.anio" name="anio" required></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-input label="Teléfono celular" labelPlacement="floating" type="tel" placeholder="+569"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label>Estado</ion-label>
+        <ion-select interface="popover" [(ngModel)]="publicacion.estado" name="estado" required>
+          <ion-select-option value="Nuevo">Nuevo</ion-select-option>
+          <ion-select-option value="Usado">Usado</ion-select-option>
+          <ion-select-option value="En mal estado">En mal estado</ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <ion-item>
-      <ion-textarea label="Descripción" labelPlacement="floating" autoGrow="true" style="min-height: 150px;"></ion-textarea>
-    </ion-item>
+      <ion-item>
+        <ion-input label="Correo Electrónico" labelPlacement="floating" type="email" placeholder="email@dominio.com" [(ngModel)]="publicacion.correoelectronico" name="correoelectronico" required></ion-input>
+      </ion-item>
 
-    <ion-button expand="full" shape="round" color="readcyclecolor" (click)="submitForm()">Enviar</ion-button>
+      <ion-item>
+        <ion-input label="Teléfono celular" labelPlacement="floating" type="tel" placeholder="+569" [(ngModel)]="publicacion.telefono" name="telefono" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea label="Descripción" labelPlacement="floating" autoGrow="true" style="min-height: 150px;" [(ngModel)]="publicacion.descripcion" name="descripcion" required></ion-textarea>
+      </ion-item>
+
+    </form>
+
+    <ion-button expand="full" shape="round" color="readcyclecolor" (click)="guardarPublicacion()">Enviar</ion-button>
     <ion-button expand="full" shape="round" color="medium" (click)="goBack()">Volver</ion-button>
+
   </div>
 </ion-content>
