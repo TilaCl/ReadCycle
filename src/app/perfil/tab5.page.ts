@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth.service';
 import { UsuarioService } from 'src/services/usuario.service';
 import { ImageUploadService } from 'src/services/image-upload.service';
-import { ActionSheetController } from '@ionic/angular';
-import { ToastController } from '@ionic/angular'; // Importar ToastController
+import { ActionSheetController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab5',
@@ -14,20 +13,19 @@ import { ToastController } from '@ionic/angular'; // Importar ToastController
 export class Tab5Page implements OnInit {
   user: any;
   nickname: string = '';
-  celular: string = '';
+  celular: string = '+56';
+  isEditCardVisible = false; // Controla la visibilidad del card para editar perfil
 
   public actionSheetButtons = [
     {
       text: 'Donar $10.000 pesos',
       role: 'destructive',
-      data: { action: 'delete' },
       handler: () => {
         console.log('Donación de $10.000 realizada');
       }
     },
     {
       text: 'Donar $1.000 pesos',
-      data: { action: 'share' },
       handler: () => {
         console.log('Donación de $1.000 realizada');
       }
@@ -35,7 +33,6 @@ export class Tab5Page implements OnInit {
     {
       text: 'Salir',
       role: 'cancel',
-      data: { action: 'cancel' },
       handler: () => {
         console.log('Donación cancelada');
       },
@@ -90,6 +87,12 @@ export class Tab5Page implements OnInit {
     }
   }
 
+  // Método para mostrar el card desplegable
+  toggleEditCard() {
+    this.isEditCardVisible = !this.isEditCardVisible;
+  }
+
+  // Método para guardar cambios de usuario
   async updateUser() {
     if (this.user) {
       await this.usuarioService.updateUsuario(this.user.id, {
@@ -97,23 +100,53 @@ export class Tab5Page implements OnInit {
         celular: this.celular,
       });
       console.log('Información actualizada con éxito');
-      this.mostrarToast('Información actualizada correctamente')
+      this.mostrarToast('Información actualizada correctamente');
+      this.toggleEditCard(); // Cierra el card después de guardar cambios
     }
   }
+
+  // Método para mostrar el toast
+  async mostrarToast(mensaje: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2000, // Duración de 2 segundos
+      position: 'bottom',
+    });
+    toast.present();
+  }
+
+// Función para formatear el número de teléfono y asegurar el prefijo "+56"
+formatPhoneNumber(event: any) {
+  let input = event.detail.value;
+
+  // Aseguramos que el prefijo "+56" esté al inicio y que solo haya números
+  if (!input.startsWith('+56')) {
+    input = '+56' + input.replace(/[^0-9]/g, ''); // Solo números
+  } else {
+    input = '+56' + input.slice(3).replace(/[^0-9]/g, ''); // Solo números después de "+56"
+  }
+
+
+
+
+  this.celular = input; // Actualizamos el valor del campo
+}
+
+// Verifica si el número de teléfono tiene el formato correcto
+isPhoneNumberValid(): boolean {
+  const phoneRegex = /^\+569\d{4}\d{4}$/;
+  return phoneRegex.test(this.celular);
+}
+
+// Verifica si el formulario es válido
+isFormValid(): boolean {
+  return this.nickname.trim() !== '' && this.isPhoneNumberValid();
+}
+
 
   logout() {
     this.authService.logout().then(() => {
       this.router.navigate(['/login']);
     });
   }
-
-    // Método para mostrar el toast
-    async mostrarToast(mensaje: string) {
-      const toast = await this.toastController.create({
-        message: mensaje,
-        duration: 2000, // Duración de 2 segundos
-        position: 'bottom',
-      });
-      toast.present();
-    }
 }
