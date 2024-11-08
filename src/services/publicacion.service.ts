@@ -4,6 +4,7 @@ import { Auth } from '@angular/fire/auth';
 import { docData, collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage'; // Importar Firebase Storage
+import { Timestamp } from 'firebase/firestore';  // Importar Timestamp
 
 export interface Publicacion {
   id: string;
@@ -16,7 +17,7 @@ export interface Publicacion {
   precio: number;
   descripcion: string;
   anio: number;
-  fechaCreacion: Date; // Nueva propiedad para la fecha de creación
+  fechaCreacion: Timestamp; // Nueva propiedad para la fecha de creación
   
 }
 
@@ -32,7 +33,7 @@ export class PublicacionService {
     const userId = this.auth.currentUser?.uid; // Obtener el ID del usuario autenticado
     if (userId) {
       const publicacionId = doc(collection(this.firestore, `Usuarios/${userId}/publicaciones`)).id; // Crear ID para la publicación
-      const fechaCreacion = new Date(); // Registrar la fecha actual
+      const fechaCreacion = Timestamp.fromDate(new Date());// Convertir Date a Timestamp
       const publicacion: Publicacion = {
         id: publicacionId,
         titulolibro,
@@ -74,11 +75,36 @@ async actualizarPublicacion(publicacionId: string, data: Partial<Publicacion>): 
   }
 }
 
-  // Eliminar una publicación
-  async eliminarPublicacion(userId: string, publicacionId: string): Promise<void> {
-    const publicacionRef = doc(this.firestore, `Usuarios/${userId}/publicaciones/${publicacionId}`);
+// Eliminar una publicación
+async eliminarPublicacion(userId: string, publicacionId: string): Promise<void> {
+  // Verifica si los parámetros son válidos
+  if (!userId || !publicacionId) {
+    console.error('El ID del usuario o la publicación no es válido');
+    return;
+  }
+
+  console.log(`Intentando eliminar publicación con ID: ${publicacionId} para el usuario ${userId}`);
+
+  // Crear referencia al documento de la publicación en Firestore
+  const publicacionRef = doc(this.firestore, `Usuarios/${userId}/publicaciones/${publicacionId}`);
+
+  // Obtener el documento para verificar que exista
+  const docSnap = await getDoc(publicacionRef);
+
+  // Si el documento no existe, loguear un error y salir de la función
+  if (!docSnap.exists()) {
+    console.error('No se encontró la publicación a eliminar');
+    return;
+  }
+
+  // Si el documento existe, proceder a eliminarlo
+  try {
     await deleteDoc(publicacionRef);
     console.log('Publicación eliminada con éxito');
+  } catch (error) {
+    console.error('Error al eliminar la publicación:', error);
   }
+}
+
 }
 

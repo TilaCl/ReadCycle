@@ -1,0 +1,35 @@
+.ion-color-readcyclecolor {
+	--ion-color-base: var(--ion-color-readcyclecolor);
+	--ion-color-base-rgb: var(--ion-color-readcyclecolor-rgb);
+	--ion-color-contrast: var(--ion-color-readcyclecolor-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-readcyclecolor-contrast-rgb);
+	--ion-color-shade: var(--ion-color-readcyclecolor-shade);
+	--ion-color-tint: var(--ion-color-readcyclecolor-tint);
+}
+
+.alert-custom {
+    --background: var(--ion-color-readcyclecolor); /* Fondo de la alerta */
+    --color: white; /* Color del texto */
+    --border-radius: 10px;
+  }
+  
+  /* Estilo personalizado para los botones */
+  .alert-custom .alert-button {
+    --border-radius: 50px; /* Hacer los botones redondeados */
+    --padding-start: 20px; /* Añadir un poco de espacio para los botones */
+    --padding-end: 20px;
+  }
+  
+  /* Botón Cancelar: Color de fondo claro, borde redondeado color readcyclecolor */
+  .alert-custom .alert-button.secondary {
+    --background: transparent; /* Fondo transparente */
+    --color: var(--ion-color-readcyclecolor); /* Color de texto */
+    --border: 2px solid var(--ion-color-readcyclecolor); /* Borde del color readcyclecolor */
+  }
+  
+  /* Botón Eliminar: Color de fondo rojo, borde redondeado rojo */
+  .alert-custom .alert-button.danger {
+    --background: transparent; /* Fondo transparente */
+    --color: red; /* Color de texto rojo */
+    --border: 2px solid red; /* Borde rojo */
+  }

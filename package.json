@@ -31,7 +31,7 @@
     "@ionic/angular": "^8.3.2",
     "cordova-plugin-camera": "^7.0.0",
     "firebase": "^10.14.1",
-    "ionicons": "^7.0.0",
+    "ionicons": "^7.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "uuid": "^10.0.0",

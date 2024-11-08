@@ -28,7 +28,10 @@
         <p><strong>Contacto:</strong></p>
         <p><strong>Correo Electrónico:</strong> {{ publicacion.correoelectronico }}</p>
         <p><strong>Número de Teléfono:</strong> {{ publicacion.telefono }}</p>
+        <p></p>
       </div>
+
+      <p>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }}</p>
     </ion-card-content>
   </ion-card>
 </ion-content>
