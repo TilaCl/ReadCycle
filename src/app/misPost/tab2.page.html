@@ -1,4 +1,4 @@
-<ion-header [translucent]="true" >
+<ion-header [translucent]="true">
   <ion-toolbar color="readcyclecolor">
     <ion-title>
       Mis Publicaciones
@@ -6,23 +6,24 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
   <ion-list>
-    <ion-card *ngFor="let publicacion of publicaciones$ | async">
+    <ion-card *ngFor="let publicacion of publicaciones$ | async" (click)="abrirModal(publicacion)">
       <ion-card-header>
         <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
         <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
       </ion-card-header>
 
-      <ion-card-content>
-        <p><strong>Estado:</strong> {{ publicacion.estado }}</p>
-        <p><strong>Correo:</strong> {{ publicacion.correoelectronico }}</p>
-        <p><strong>Teléfono:</strong> {{ publicacion.telefono }}</p>
-        <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
-        <p *ngIf="publicacion.precio"><strong>Precio:</strong> ${{ publicacion.precio }}</p>
-        <p><strong>Año:</strong> {{ publicacion.anio }}</p>
-      </ion-card-content>
+      <!-- Cuadro que simula la imagen -->
+      <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+        <ion-icon name="image-outline" size="large"></ion-icon>
+      </div>
+
+      <!-- Icono de edición en la esquina superior derecha -->
+      <ion-button fill="clear" slot="end" size="small" (click)="editarPublicacion(publicacion, $event)">
+        <ion-icon name="pencil"></ion-icon>
+      </ion-button>
     </ion-card>
   </ion-list>
 </ion-content>
+

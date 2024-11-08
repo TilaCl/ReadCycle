@@ -1,0 +1,38 @@
+.ion-color-readcyclecolor {
+	--ion-color-base: var(--ion-color-readcyclecolor);
+	--ion-color-base-rgb: var(--ion-color-readcyclecolor-rgb);
+	--ion-color-contrast: var(--ion-color-readcyclecolor-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-readcyclecolor-contrast-rgb);
+	--ion-color-shade: var(--ion-color-readcyclecolor-shade);
+	--ion-color-tint: var(--ion-color-readcyclecolor-tint);
+}
+
+.titulo-detalles {
+    text-align: center;
+    margin-right: 10px;
+  }
+  
+  .card-detalles {
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    margin-top: 20px;
+  }
+  
+  .info-detalles {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .info-contacto {
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+  }
+  
+  p {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  

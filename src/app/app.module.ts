@@ -12,11 +12,16 @@ import { AppComponent } from './app.component';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { DetallesPublicacionComponent } from './detalles-publicacion/detalles-publicacion.component';
+import { EditarPublicacionComponent } from './editar-publicacion/editar-publicacion.component';
+import { FormsModule } from '@angular/forms';  // Importa FormsModule
+
 
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  declarations: [AppComponent, DetallesPublicacionComponent,
+    EditarPublicacionComponent],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule],
   providers: 
   [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, 
     provideFirebaseApp(() => initializeApp(environment.firebase)), 

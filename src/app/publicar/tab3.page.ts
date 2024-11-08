@@ -15,6 +15,7 @@ export class Tab3Page {
   selectedOption: string; // Variable para almacenar la opción seleccionada
   isInSale: boolean = false; // Variable para controlar si está en venta
   price: number; // Variable para almacenar el precio
+  fotos: File[] = []; // Array para almacenar las fotos seleccionadas
   publicacion = {
     titulolibro: '',
     autor: '',
@@ -22,8 +23,8 @@ export class Tab3Page {
     estado: '',
     correoelectronico: '',
     telefono: 0,
-    descripcion: '',
     precio: 0,
+    descripcion: '',
     anio: 0,
   };
   
@@ -70,7 +71,7 @@ export class Tab3Page {
   }
   // Método para guardar la publicación
   guardarPublicacion() {
-    const { titulolibro, autor, genero, estado, correoelectronico, telefono, descripcion, precio, anio } = this.publicacion;
+    const { titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio } = this.publicacion;
     
     this.publicacionService.crearPublicacion(
       titulolibro,
@@ -79,8 +80,8 @@ export class Tab3Page {
       estado,
       correoelectronico,
       telefono,
-      descripcion,
       precio,
+      descripcion, 
       anio,
     )
     .then(() => {
@@ -94,6 +95,8 @@ export class Tab3Page {
     });
   }
 
+
+
   // Método para reiniciar el formulario
   resetForm() {
     this.publicacion = {
@@ -103,8 +106,8 @@ export class Tab3Page {
       estado: '',
       correoelectronico: '',
       telefono: 0,
-      descripcion: '',
       precio: 0,
+      descripcion: '', 
       anio: 0,
     };
   }

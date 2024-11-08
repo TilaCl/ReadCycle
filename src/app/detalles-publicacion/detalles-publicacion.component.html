@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="readcyclecolor">
+    <ion-buttons slot="start">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="titulo-detalles">Detalles de la Publicación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card class="card-detalles">
+    <ion-card-header>
+      <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
+      <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="info-detalles">
+        <p><strong></strong> {{ publicacion.estado }}</p>
+        <p><strong></strong> {{ publicacion.anio }}</p>
+        <p><strong></strong> {{ publicacion.descripcion }}</p>
+        <p><strong></strong> ${{ publicacion.precio }}</p>
+      </div>
+
+      <div class="info-contacto">
+        <p><strong>Contacto:</strong></p>
+        <p><strong>Correo Electrónico:</strong> {{ publicacion.correoelectronico }}</p>
+        <p><strong>Número de Teléfono:</strong> {{ publicacion.telefono }}</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+

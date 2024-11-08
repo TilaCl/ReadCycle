@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Editar Publicación</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="guardarCambios()">
+    <ion-item>
+      <ion-input label="Título del libro" [(ngModel)]="publicacion.titulolibro" name="titulolibro" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="Autor" [(ngModel)]="publicacion.autor" name="autor" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="Género" [(ngModel)]="publicacion.genero" name="genero" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="Año" type="number" maxlength="4" [(ngModel)]="publicacion.anio" name="anio" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input label="Precio" type="number" [(ngModel)]="publicacion.precio" name="precio"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea label="Descripción" [(ngModel)]="publicacion.descripcion" name="descripcion" required></ion-textarea>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" color="primary">Guardar Cambios</ion-button>
+    <ion-button expand="full" color="danger" (click)="eliminarPublicacion()">Eliminar Publicación</ion-button>
+  </form>
+</ion-content>
