@@ -19,6 +19,7 @@ export interface Publicacion {
   descripcion: string;
   anio: number;
   fechaCreacion: Timestamp;
+  coordenadas?: { lat: number; lng: number };
   imagenesUrl?: string[];  // Nuevo campo opcional para almacenar las URLs de las imágenes
 }
 
@@ -41,7 +42,18 @@ export class PublicacionService {
     }
 
   // Crear una nueva publicación para un usuario
-  async crearPublicacion(titulolibro: string, autor: string, genero: string, estado: string, correoelectronico: string, telefono: number, precio: number, descripcion: string, anio: number): Promise<string> {
+  async crearPublicacion(
+    titulolibro: string, 
+    autor: string, 
+    genero: string, 
+    estado: string, 
+    correoelectronico: string, 
+    telefono: number, 
+    precio: number, 
+    descripcion: string, 
+    anio: number,
+    coordenadas: { lat: number; lng: number }): Promise<string> {
+
     const userId = this.auth.currentUser?.uid;
     if (userId) {
         const publicacionId = doc(collection(this.firestore, `Usuarios/${userId}/publicaciones`)).id;
@@ -59,6 +71,7 @@ export class PublicacionService {
             descripcion,
             anio,
             fechaCreacion,
+            coordenadas
         };
 
         await setDoc(doc(this.firestore, `Usuarios/${userId}/publicaciones/${publicacionId}`), publicacion);

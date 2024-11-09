@@ -16,11 +16,12 @@ import { DetallesPublicacionComponent } from './detalles-publicacion/detalles-pu
 import { EditarPublicacionComponent } from './editar-publicacion/editar-publicacion.component';
 import { FormsModule } from '@angular/forms';  // Importa FormsModule
 import { VistapreviaimagenComponent } from './vistapreviaimagen/vistapreviaimagen.component';
+import { MapaComponent } from './mapa/mapa.component';
 
 
 @NgModule({
   declarations: [AppComponent, DetallesPublicacionComponent,
-    EditarPublicacionComponent, VistapreviaimagenComponent],
+    EditarPublicacionComponent, VistapreviaimagenComponent, MapaComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule],
   providers: 
   [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, 

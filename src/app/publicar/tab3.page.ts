@@ -1,10 +1,12 @@
-import { ImageUploadService } from 'src/services/image-upload.service';
+import { GeocodingService } from './../../services/geocoding.service';
 import { Component } from '@angular/core';
 import { UsuarioService } from 'src/services/usuario.service';
 import { PublicacionService } from 'src/services/publicacion.service';
+import { ImageUploadService } from 'src/services/image-upload.service';
 import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+
 
 
 @Component({
@@ -14,10 +16,6 @@ import { ToastController } from '@ionic/angular';
 })
 export class Tab3Page {
 
-  selectedOption: string; // Variable para almacenar la opción seleccionada
-  isInSale: boolean = false; // Variable para controlar si está en venta
-  price: number; // Variable para almacenar el precio
-  fotos: File[] = []; // Array para almacenar las fotos seleccionadas
   publicacion = {
     titulolibro: '',
     autor: '',
@@ -28,23 +26,21 @@ export class Tab3Page {
     precio: 0,
     descripcion: '',
     anio: 0,
+    coordenadas: { lat: 0, lng: 0 }
   };
-  
+  fotos: File[] = []; // Array para almacenar las fotos seleccionadas
 
   constructor(
     private usuarioService: UsuarioService,
-    private publicacionService: PublicacionService, 
+    private geocodingService: GeocodingService,
+    private publicacionService: PublicacionService,
     private auth: Auth,
-    private router: Router, 
+    private router: Router,
     private toastController: ToastController,
-    private imageUploadService: ImageUploadService) 
-    {
-    this.selectedOption = ''; // Inicialmente no hay opción seleccionada
-    this.isInSale = false; // Inicialmente, el libro no está en venta
-    this.price = 0; // Inicializa el precio a 0
-  }
+    private imageUploadService: ImageUploadService
+  ) { }
 
-
+  // Validación del campo "Año" para asegurarse de que no exceda los 4 dígitos
   validateLength(event: any) {
     const input = event.target.value;
     if (input.length > 4) {
@@ -52,35 +48,7 @@ export class Tab3Page {
     }
   }
 
-  selectOption(option: string) {
-    this.selectedOption = option; // Actualiza la opción seleccionada
-  }
-
-  onSaleChange() {
-    console.log("Estado de venta:", this.isInSale);
-  }
-
-  submitForm() {
-    // Manejar la lógica para enviar el formulario
-    console.log("Opción seleccionada:", this.selectedOption);
-    if (this.selectedOption === 'venta') {
-      console.log("Precio:", this.price);
-      // Agregar lógica adicional para manejar la venta
-    } else if (this.selectedOption === 'intercambio') {
-      console.log("Estado de venta:", this.isInSale);
-      // Agregar lógica adicional para manejar el intercambio
-    }
-  }
-
-  goBack() {
-    this.selectedOption = ''; // Restablece la opción seleccionada
-    this.isInSale = false; // Opcional: Restablece el estado de venta
-    this.price = 0; // Opcional: Restablece el precio
-  }
-
-
-
-  // Evento para manejar la selección de múltiples fotos
+  // Evento para manejar la selección de imágenes
   onFilesSelected(event: any) {
     const files = event.target.files;
     if (files.length > 3) {
@@ -90,61 +58,70 @@ export class Tab3Page {
     this.fotos = Array.from(files);
   }
 
-  guardarPublicacion() {
+  // Método para guardar la publicación
+  async guardarPublicacion() {
     const { titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio } = this.publicacion;
     
-    this.publicacionService.crearPublicacion(titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio)
-    .then(async (publicacionId) => {
-        console.log('Publicación creada con éxito');
-
-        // Subir cada imagen y obtener su URL
-        const imagenesUrl = await Promise.all(this.fotos.map((foto, index) => {
-          const filePath = `postImg/${this.auth.currentUser?.uid}/${publicacionId}/imagen_${index}`;
-            return this.imageUploadService.uploadImage(foto, filePath).toPromise();
-        }));
-
-        // Filtrar valores undefined para asegurar que imagenesUrl sea de tipo string[]
-        const filteredImagenesUrl = imagenesUrl.filter((url): url is string => url !== undefined);
-
-        // Actualizar la publicación con las URLs de las imágenes en Firestore
-        await this.publicacionService.actualizarPublicacion(publicacionId, { imagenesUrl: filteredImagenesUrl });
-
-        this.resetForm(); // Reiniciar formulario después de guardar
-        this.goBack();
-        this.mostrarToast('Publicación creada exitosamente');
-    })
-    .catch((error) => {
-        console.error('Error al guardar la publicación: ', error);
-    });
-}
-
-
-
-  // Método para reiniciar el formulario
-  resetForm() {
-    this.publicacion = {
-      titulolibro: '',
-      autor: '',
-      genero: '',
-      estado: '',
-      correoelectronico: '',
-      telefono: 0,
-      precio: 0,
-      descripcion: '', 
-      anio: 0,
-    };
+    try {
+      // Obtener las coordenadas usando geocodingService
+      const coordenadas = await this.geocodingService.obtenerUbicacion();
+      
+      // Verificar que las coordenadas estén definidas
+      if (!coordenadas || !coordenadas.lat || !coordenadas.lng) {
+        throw new Error('No se pudo obtener la ubicación.');
+      }
+  
+      // Crear la publicación con coordenadas
+      const publicacionId = await this.publicacionService.crearPublicacion(
+        titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, coordenadas
+      );
+      console.log('Publicación creada con éxito');
+  
+      // Subir las imágenes seleccionadas y obtener sus URLs
+      const imagenesUrl = await Promise.all(this.fotos.map((foto, index) => {
+        const filePath = `postImg/${this.auth.currentUser?.uid}/${publicacionId}/imagen_${index}`;
+        return this.imageUploadService.uploadImage(foto, filePath).toPromise();
+      }));
+  
+      // Filtrar valores undefined para asegurar que imagenesUrl sea de tipo string[]
+      const filteredImagenesUrl = imagenesUrl.filter((url): url is string => url !== undefined);
+  
+      // Actualizar la publicación con las URLs de las imágenes en Firestore
+      await this.publicacionService.actualizarPublicacion(publicacionId, { imagenesUrl: filteredImagenesUrl });
+  
+      // Resetear el formulario
+      this.resetForm();
+      this.mostrarToast('Publicación creada exitosamente');
+    } catch (error) {
+      console.error('Error al guardar la publicación: ', error);
+      this.mostrarToast('Error al crear la publicación');
+    }
   }
+
+// Método para reiniciar el formulario
+resetForm() {
+  this.publicacion = {
+    titulolibro: '',
+    autor: '',
+    genero: '',
+    estado: '',
+    correoelectronico: '',
+    telefono: 0,
+    precio: 0,
+    descripcion: '',
+    anio: 0,
+    coordenadas: { lat: 0, lng: 0 },
+  };
+  this.fotos = []; // Limpiar las fotos seleccionadas
+}
 
   // Método para mostrar el toast
   async mostrarToast(mensaje: string) {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: 2000, // Duración de 2 segundos
-      position: 'bottom',
-    });
-    toast.present();
-  }
+  const toast = await this.toastController.create({
+    message: mensaje,
+    duration: 2000,
+    position: 'bottom',
+  });
+  toast.present();
 }
-
-
-
+}

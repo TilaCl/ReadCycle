@@ -11,9 +11,9 @@
 
   <!-- Formulario -->
   <div>
-    <h2></h2>
 
-    <form (ngSubmit)="guardarPublicacion()">
+
+    <form (ngSubmit)="guardarPublicacion()" > 
 
       <ion-item>
         <input type="file" (change)="onFilesSelected($event)" multiple accept="image/*" />
@@ -54,7 +54,7 @@
 
       <ion-item>
         <ion-label>Precio </ion-label>
-        <ion-input type="number" [(ngModel)]="price" [(ngModel)]="publicacion.precio" name="precio" required></ion-input>
+        <ion-input type="number"  [(ngModel)]="publicacion.precio" name="precio" required></ion-input>
       </ion-item>
 
       <ion-item>
