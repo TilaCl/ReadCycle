@@ -10,18 +10,41 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+
+  
   <ion-card class="card-detalles">
+      <!-- Carrusel de imágenes usando Swiper -->
+  <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="swiper-container">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide" *ngFor="let imagenUrl of publicacion.imagenesUrl" (click)="verImagen(imagenUrl)">
+        <img [src]="imagenUrl" alt="Imagen del libro" style="width: 100%; height: 150px; object-fit: cover;" />
+      </div>
+    </div>
+    <!-- Paginación del carrusel -->
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <!-- Mostrar icono si no hay imágenes o si imagenesUrl no existe -->
+  <ng-template #noImages>
+    <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+      <ion-icon name="image-outline" size="large"></ion-icon>
+    </div>
+  </ng-template>
     <ion-card-header>
       <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
       <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
     </ion-card-header>
+    
 
     <ion-card-content>
       <div class="info-detalles">
-        <p><strong></strong> {{ publicacion.estado }}</p>
-        <p><strong></strong> {{ publicacion.anio }}</p>
-        <p><strong></strong> {{ publicacion.descripcion }}</p>
-        <p><strong></strong> ${{ publicacion.precio }}</p>
+        <p><strong>Descripcion:</strong></p>
+        <div class="info-contacto">
+        <p style="margin: 20px;"><strong></strong>{{ publicacion.descripcion }}</p>
+      </div>
+        <p><strong></strong>Estado: {{ publicacion.estado }}</p>
+        <p><strong></strong>Año: {{ publicacion.anio }}</p>
+        <p><strong></strong>precio: {{ publicacion.precio | currency:'$':'symbol':'1.0-0' }}</p>
       </div>
 
       <div class="info-contacto">

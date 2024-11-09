@@ -1,6 +1,6 @@
 import { environment } from './../environments/environment';
 
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -15,12 +15,12 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { DetallesPublicacionComponent } from './detalles-publicacion/detalles-publicacion.component';
 import { EditarPublicacionComponent } from './editar-publicacion/editar-publicacion.component';
 import { FormsModule } from '@angular/forms';  // Importa FormsModule
-
+import { VistapreviaimagenComponent } from './vistapreviaimagen/vistapreviaimagen.component';
 
 
 @NgModule({
   declarations: [AppComponent, DetallesPublicacionComponent,
-    EditarPublicacionComponent],
+    EditarPublicacionComponent, VistapreviaimagenComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, FormsModule],
   providers: 
   [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, 
@@ -30,5 +30,7 @@ import { FormsModule } from '@angular/forms';  // Importa FormsModule
     provideStorage(()=> getStorage())
   ],
   bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  
 })
 export class AppModule {}

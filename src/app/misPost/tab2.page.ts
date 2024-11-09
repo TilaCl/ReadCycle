@@ -6,6 +6,8 @@ import { Publicacion } from 'src/services/publicacion.service';
 import { ModalController } from '@ionic/angular'; // Importamos ModalController
 import { EditarPublicacionComponent } from '../editar-publicacion/editar-publicacion.component';
 import { DetallesPublicacionComponent } from '../detalles-publicacion/detalles-publicacion.component';
+import { AuthService } from 'src/services/auth.service';
+import { UsuarioService } from 'src/services/usuario.service';
 
 @Component({
   selector: 'app-tab2',
@@ -15,18 +17,30 @@ import { DetallesPublicacionComponent } from '../detalles-publicacion/detalles-p
 export class Tab2Page implements OnInit {
 
   publicaciones$: Observable<Publicacion[]> = new Observable<Publicacion[]>(); // Observable para las publicaciones
-
+  user: any;
   constructor(
     private publicacionService: PublicacionService,
     private auth: Auth,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private authService: AuthService,
+    private usuarioService: UsuarioService
   ) 
     {}
-
+  
   ngOnInit() {
-    this.cargarPublicaciones(); // Cargar las publicaciones al iniciar la página
+    
+    this.authService.getUser().subscribe(async user => {
+      this.user = user;
+      if (user) {
+        await this.loadUserData(user.id);
+        this.cargarPublicaciones(); // Cargar las publicaciones al iniciar la página
+      }
+    });
   }
 
+  async loadUserData(userId: string) {
+    const usuario = await this.usuarioService.getUsuario(userId);
+  }
   // Método para obtener todas las publicaciones del usuario autenticado
   cargarPublicaciones() {
     const userId = this.auth.currentUser?.uid;
