@@ -3,84 +3,88 @@
     <ion-title>Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
   <div *ngIf="user" class="ion-padding">
-    <ion-card style="text-align: center;	padding-top: 5%; border-radius: 3%;">
-      <!-- Botón de la imagen de perfil -->
-      <button style="border-radius: 45%; background-color: #fab169;" (click)="fileInput.click()">
-        <img [src]="user.photo" alt="Foto de perfil " style="border-radius: 50%;width: 150px;height: 150px; "/>
-      </button>
+    <ion-card style="text-align: center; padding-top: 3%; border-radius: 3%; position: relative;">
+      <!-- Contenedor de la imagen de perfil (ubicado arriba de la tarjeta) -->
+      <div style="position: relative; bottom: -5px; left: 50%; transform: translateX(-50%);">
+
+        <button
+          style="border-radius: 50%; background-color: #fab169; padding: 0; border: none; width: 150px; height: 150px; "
+          (click)="fileInput.click()"
+        >
+          <img
+            [src]="user.photo"
+            alt="Foto de perfil"
+            style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid #fab169;"
+          />
+        </button>
+      </div>
+
       <!-- Input oculto para subir la nueva imagen -->
       <input type="file" hidden #fileInput (change)="uploadProfileImage($event)" accept="image/*" />
+
       <!-- Información del usuario -->
-      <div class="info">
-      <p><strong>Nombre:</strong> {{ user.name }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-      <p><strong>Nombre Usuario:</strong> {{ nickname }}</p>
-      <p><strong>Número de Teléfono:</strong> {{ celular }}</p>
+      <div class="info" style="margin-top: 30px;">
+        <p><strong>Nombre:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Nombre Usuario:</strong> {{ nickname }}</p>
+        <p><strong>Número de Teléfono:</strong> {{ celular }}</p>
       </div>
 
+      <!-- Botón para abrir el card desplegable -->
+      <ion-button (click)="toggleEditCard()" color="readcyclecolor" fill="outline">
+        Editar Perfil
+      </ion-button>
 
-        <!-- Botón para abrir el card desplegable -->
-  <ion-button (click)="toggleEditCard()" color="danger" fill="outline">
-    Editar Perfil
-  </ion-button>
+      <!-- Card desplegable para editar perfil -->
+      <ion-card *ngIf="isEditCardVisible">
+        <ion-card-content>
+          <!-- Campo para modificar el nombre de usuario -->
+          <ion-item>
+            <ion-label position="stacked">Modificar Nombre de usuario</ion-label>
+            <ion-input [(ngModel)]="nickname" placeholder="Nombre de usuario" [counter]="true" maxlength="15"></ion-input>
+          </ion-item>
+          <ion-note *ngIf="!nickname.trim()" color="danger">Nombre de usuario es requerido</ion-note>
 
-  <!-- Card desplegable para editar perfil -->
-  <ion-card *ngIf="isEditCardVisible">
-    <ion-card-content>
-      <!-- Campo para modificar el nombre de usuario -->
-      <ion-item>
-        <ion-label position="stacked">Modificar Nombre de usuario</ion-label>
-        <ion-input [(ngModel)]="nickname" placeholder="Nombre de usuario" [counter]="true" maxlength="15"></ion-input>
-      </ion-item>
-      <ion-note *ngIf="!nickname.trim()" color="danger">Nombre de usuario es requerido</ion-note>
+          <!-- Campo para modificar el número de teléfono -->
+          <ion-item>
+            <ion-label position="stacked">Número de Teléfono</ion-label>
+            <ion-input
+              [(ngModel)]="celular"
+              [value]="celular"
+              placeholder="+56 9xxxxxxxx"
+              (ionChange)="formatPhoneNumber($event)"
+              maxlength="12"
+              inputmode="numeric"
+            ></ion-input>
+          </ion-item>
+          <ion-note *ngIf="!celular || celular.length < 12" color="danger">
+            El teléfono es requerido y debe estar completo
+          </ion-note>
 
+          <!-- Botones para guardar y cancelar cambios -->
+          <div style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 8px;">
+            <ion-button color="readcyclecolor" (click)="updateUser()" [disabled]="!isFormValid()">Guardar Cambios</ion-button>
+            <ion-button color="readcyclecolor" fill="outline" (click)="toggleEditCard()">Cancelar</ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
 
-      <!-- Campo para modificar el número de teléfono -->
-      <ion-item>
-        <ion-label position="stacked">Número de Teléfono</ion-label>
-        <ion-input
-          [(ngModel)]="celular"
-          [value]="celular"
-          placeholder="+56 9xxxxxxxx"
-          (ionChange)="formatPhoneNumber($event)"
-          maxlength="12"
-          inputmode="numeric"
-        >
-        </ion-input>
-      </ion-item>
-      <ion-note *ngIf="!celular || celular.length < 12" color="danger">
-        El teléfono es requerido y debe estar completo
-      </ion-note>
-      <!-- Botones para guardar y cancelar cambios -->
-      <div style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 8px;">
-        <ion-button  color="primary" (click)="updateUser()" [disabled]="!isFormValid()">Guardar Cambios</ion-button>
-        <ion-button  color="danger" (click)="toggleEditCard()">Cancelar</ion-button>
-      </div>
-    </ion-card-content>
-  </ion-card>
-
-
-
-      <br>
+      <br />
       <!-- Botón y Action Sheet para Donar -->
       <ion-button id="open-action-sheet" color="primary" fill="solid">
         Donar
       </ion-button>
       <ion-action-sheet trigger="open-action-sheet" header="Donando eliminas anuncios!" [buttons]="actionSheetButtons"></ion-action-sheet>
-      <img src="https://i.ibb.co/QrfXWw9/corona.png" style="width: 30px;position: relative;bottom: -15px;" alt="">
+      <img src="https://i.ibb.co/QrfXWw9/corona.png" style="width: 30px; position: relative; bottom: -15px;" alt="" />
       <p style="font-size: medium;">¡Elimina anuncios!</p>
 
       <!-- Botón para cerrar sesión -->
-      <ion-button (click)="logout()" color="danger" style="padding: 10%;">
+      <ion-button (click)="logout()" color="readcyclecolor" style="padding: 5%;">
         Cerrar Sesión
       </ion-button>
     </ion-card>
   </div>
-
-
-
-
-
-
+</ion-content>
