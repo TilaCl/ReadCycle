@@ -4,11 +4,11 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <div *ngIf="user" class="ion-padding">
-    <ion-card style="text-align: center;	padding-top: 5%; border-radius: 3%;">
+  <div *ngIf="user" class="ion-padding ">
+    <ion-card style="text-align: center;	padding-top: 5%; border-radius: 3%;" class="card-detalles">
       <!-- Botón de la imagen de perfil -->
-      <button style="border-radius: 45%; background-color: #fab169;" (click)="fileInput.click()">
-        <img [src]="user.photo" alt="Foto de perfil " style="border-radius: 50%;width: 150px;height: 150px; "/>
+      <button style="border-radius: 55%; width: 155px; height: 155px;  background-color: #474747;" (click)="fileInput.click()">
+        <img [src]="user.photo" alt="Foto de perfil " style="border-radius: 50%;width: 95%; height: 95%; "/>
       </button>
       <!-- Input oculto para subir la nueva imagen -->
       <input type="file" hidden #fileInput (change)="uploadProfileImage($event)" accept="image/*" />

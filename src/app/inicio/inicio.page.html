@@ -1,14 +1,36 @@
 <ion-header [translucent]="true" >
   <ion-toolbar color="readcyclecolor">
-    <ion-searchbar animated="true" placeholder="Buscar" style="border: 1px;"></ion-searchbar>
+    <ion-searchbar animated="true" placeholder="Buscar"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      
-    </ion-toolbar>
-  </ion-header>
-  
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-card *ngFor="let publicacion of publicaciones$ | async" (click)="abrirModal(publicacion)" class="card-detalles">
+      <ion-card-header>
+        <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
+        <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
+      </ion-card-header>
+
+
+      <!-- Carrusel de imágenes usando Swiper -->
+      <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" *ngFor="let imagenUrl of publicacion.imagenesUrl">
+            <img [src]="imagenUrl" alt="Imagen del libro" style="width: 100%; height: 150px; object-fit: cover;" />
+          </div>
+        </div>
+        <!-- Paginación del carrusel -->
+        <div class="swiper-pagination"></div>
+      </div>
+
+      <!-- Mostrar icono si no hay imágenes o si imagenesUrl no existe -->
+      <ng-template #noImages>
+        <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+          <ion-icon name="image-outline" size="large"></ion-icon>
+        </div>
+      </ng-template>
+
+    </ion-card>
+  </ion-list>
 </ion-content>

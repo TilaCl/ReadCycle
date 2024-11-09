@@ -4,6 +4,8 @@ import { ModalController } from '@ionic/angular';
 import { Auth } from '@angular/fire/auth'; // Para manejar el usuario autenticado
 import { Router } from '@angular/router';
 import { Timestamp } from 'firebase/firestore';  // Importar Timestamp
+import { VistapreviaimagenComponent } from '../vistapreviaimagen/vistapreviaimagen.component';
+
 
 @Component({
   selector: 'app-detalles-publicacion',
@@ -15,6 +17,17 @@ export class DetallesPublicacionComponent {
 
   constructor(private modalController: ModalController, private publicacionService: PublicacionService, private auth: Auth,
     private router: Router) {}
+    
+    async verImagen(imagenUrl: string) {
+      const modal = await this.modalController.create({
+        component: VistapreviaimagenComponent,
+        componentProps: { imagenUrl }
+      });
+      return await modal.present();
+    }
+
+
+
 
   cerrarModal() {
     this.modalController.dismiss();

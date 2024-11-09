@@ -1,24 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { docData, collectionData } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage'; // Importar Firebase Storage
-import { Timestamp } from 'firebase/firestore';  // Importar Timestamp
+import { docData, collectionData, collectionGroup } from '@angular/fire/firestore';
+import { Observable, forkJoin, from, switchMap } from 'rxjs';
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+import { Timestamp } from 'firebase/firestore';
+
 
 export interface Publicacion {
   id: string;
   titulolibro: string;
   autor: string;
-  genero: string,
+  genero: string;
   estado: string;
   correoelectronico: string;
   telefono: number;
   precio: number;
   descripcion: string;
   anio: number;
-  fechaCreacion: Timestamp; // Nueva propiedad para la fecha de creación
-  
+  fechaCreacion: Timestamp;
+  imagenesUrl?: string[];  // Nuevo campo opcional para almacenar las URLs de las imágenes
 }
 
 @Injectable({
@@ -27,35 +28,45 @@ export interface Publicacion {
 export class PublicacionService {
 
   constructor(private firestore: Firestore, private auth: Auth, private storage: Storage) {}
+  
+  // Función para subir múltiples imágenes
+    uploadImages(images: File[], path: string): Observable<string[]> {
+      const uploadObservables = images.map(image => {
+        const imageRef = ref(this.storage, `${path}/${image.name}`);
+        return from(uploadBytes(imageRef, image)).pipe(
+          switchMap(result => getDownloadURL(result.ref))
+        );
+      });
+      return forkJoin(uploadObservables); // Retorna un observable que se completa cuando todas las subidas finalizan
+    }
 
   // Crear una nueva publicación para un usuario
-  async crearPublicacion(titulolibro: string, autor: string, genero: string, estado: string, correoelectronico: string, telefono: number, precio: number, descripcion: string, anio: number): Promise<void> {
-    const userId = this.auth.currentUser?.uid; // Obtener el ID del usuario autenticado
+  async crearPublicacion(titulolibro: string, autor: string, genero: string, estado: string, correoelectronico: string, telefono: number, precio: number, descripcion: string, anio: number): Promise<string> {
+    const userId = this.auth.currentUser?.uid;
     if (userId) {
-      const publicacionId = doc(collection(this.firestore, `Usuarios/${userId}/publicaciones`)).id; // Crear ID para la publicación
-      const fechaCreacion = Timestamp.fromDate(new Date());// Convertir Date a Timestamp
-      const publicacion: Publicacion = {
-        id: publicacionId,
-        titulolibro,
-        autor,
-        genero,
-        estado,
-        correoelectronico,
-        telefono,
-        precio,
-        descripcion,
-        anio,
-        fechaCreacion,
-      };
+        const publicacionId = doc(collection(this.firestore, `Usuarios/${userId}/publicaciones`)).id;
+        const fechaCreacion = Timestamp.fromDate(new Date());
+        
+        const publicacion: Publicacion = {
+            id: publicacionId,
+            titulolibro,
+            autor,
+            genero,
+            estado,
+            correoelectronico,
+            telefono,
+            precio,
+            descripcion,
+            anio,
+            fechaCreacion,
+        };
 
-      // Guardar la publicación en la subcolección "publicaciones" del usuario
-      await setDoc(doc(this.firestore, `Usuarios/${userId}/publicaciones/${publicacionId}`), publicacion);
-      console.log('Publicación creada con éxito');
+        await setDoc(doc(this.firestore, `Usuarios/${userId}/publicaciones/${publicacionId}`), publicacion);
+        return publicacionId; // Retorna el ID de la publicación
     } else {
-      console.error('Usuario no autenticado');
+        throw new Error('Usuario no autenticado');
     }
-  }
-
+}
 
   // Obtener todas las publicaciones de un usuario
   obtenerPublicacionesDeUsuario(userId: string): Observable<Publicacion[]> {
@@ -105,6 +116,13 @@ async eliminarPublicacion(userId: string, publicacionId: string): Promise<void> 
     console.error('Error al eliminar la publicación:', error);
   }
 }
+
+// Obtener todas las publicaciones de todas las subcolecciones
+obtenerTodasLasPublicaciones(): Observable<Publicacion[]> {
+  const publicacionesRef = collectionGroup(this.firestore, 'publicaciones');
+  return collectionData(publicacionesRef, { idField: 'id' }) as Observable<Publicacion[]>;
+}
+
 
 }
 

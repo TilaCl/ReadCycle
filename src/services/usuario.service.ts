@@ -3,6 +3,7 @@ import { Firestore, collection, doc, setDoc, getDoc, updateDoc } from '@angular/
 import { Observable } from 'rxjs';
 import { docData, collectionData } from '@angular/fire/firestore';
 import { signOut, Auth } from '@angular/fire/auth';
+import { environment } from 'src/environments/environment';
 
 export interface Usuario {
   id: string;  // Cambiamos a id: string para utilizar el UID de Firebase Auth
@@ -18,6 +19,8 @@ export interface Usuario {
 })
 export class UsuarioService {
 
+  private apiUrl = `${environment.firebase}/publicaciones`; // Endpoint para obtener publicaciones
+  
   constructor(private firestore: Firestore) {}
 
   // Crear un nuevo usuario

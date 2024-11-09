@@ -69,19 +69,21 @@ export class Tab5Page implements OnInit {
   uploadProfileImage(event: any) {
     const file = event.target.files[0];
     if (file) {
-      const filePath = `profile_images/${this.user.id}`;
-
+      const filePath = `profile_images/${this.user.id}`; // Misma ruta para sobreescribir la imagen
+  
       this.imageUploadService.uploadImage(file, filePath).subscribe(
         (url: string) => {
           this.user.photo = url; // Actualiza la foto en el objeto del usuario
           this.usuarioService.updateUsuario(this.user.id, { fotourl: url }).then(() => {
             console.log('Foto de perfil actualizada');
+            this.mostrarToast('Foto cambiada con exito')
           }).catch(error => {
             console.error('Error al actualizar la URL en Firestore: ', error);
           });
         },
         error => {
           console.error('Error al subir la imagen: ', error);
+          this.mostrarToast('Error al subir la foto, intentelo mas tarde')
         }
       );
     }

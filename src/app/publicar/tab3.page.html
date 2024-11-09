@@ -15,7 +15,9 @@
 
     <form (ngSubmit)="guardarPublicacion()">
 
-
+      <ion-item>
+        <input type="file" (change)="onFilesSelected($event)" multiple accept="image/*" />
+      </ion-item>
   
       <ion-item>
         <ion-input label="Título del libro" labelPlacement="floating" [(ngModel)]="publicacion.titulolibro" name="titulolibro" required></ion-input>

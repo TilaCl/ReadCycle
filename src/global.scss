@@ -44,3 +44,9 @@
 	--ion-color-shade: var(--ion-color-readcyclecolor-shade);
 	--ion-color-tint: var(--ion-color-readcyclecolor-tint);
 }
+
+.card-detalles {
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.6);
+	border-radius: 12px;
+    margin-top: 20px;
+  }
