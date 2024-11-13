@@ -1,4 +1,4 @@
-<ion-header [translucent]="true" >
+<ion-header [translucent]="true">
   <ion-toolbar color="readcyclecolor">
     <ion-title>
       Publicar
@@ -6,31 +6,37 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
-
   <!-- Formulario -->
   <div>
-
-
-    <form (ngSubmit)="guardarPublicacion()" > 
-
+    <form (ngSubmit)="guardarPublicacion()">
       <ion-item>
         <input type="file" (change)="onFilesSelected($event)" multiple accept="image/*" />
       </ion-item>
-  
+
       <ion-item>
         <ion-input label="Título del libro" labelPlacement="floating" [(ngModel)]="publicacion.titulolibro" name="titulolibro" required></ion-input>
       </ion-item>
-      
-      <ion-item>
-        <ion-input label="Autor" labelPlacement="floating" [(ngModel)]="publicacion.autor" name="autor" required></ion-input>
-      </ion-item>
 
       <ion-item>
-        <ion-input label="Género" labelPlacement="floating" [(ngModel)]="publicacion.genero" name="genero" required></ion-input>
+        <ion-label position="floating">Género</ion-label>
+        <ion-input [(ngModel)]="publicacion.genero" name="genero" (ionInput)="filtrarGeneros($event)"></ion-input>
+        <ion-list *ngIf="mostrarSugerenciasGenero">
+          <ion-item *ngFor="let genero of generosFiltrados" (click)="seleccionarGenero(genero)">
+            {{ genero }}
+          </ion-item>
+        </ion-list>
       </ion-item>
-
+    
+      <ion-item>
+        <ion-label position="floating">Autor</ion-label>
+        <ion-input [(ngModel)]="publicacion.autor" name="autor" (ionInput)="filtrarAutores($event)"></ion-input>
+        <ion-list *ngIf="mostrarSugerenciasAutor">
+          <ion-item *ngFor="let autor of autoresFiltrados" (click)="seleccionarAutor(autor)">
+            {{ autor }}
+          </ion-item>
+        </ion-list>
+      </ion-item>
       <ion-item>
         <ion-input label="Año" labelPlacement="floating" type="number" maxlength="4" (ionInput)="validateLength($event)" [(ngModel)]="publicacion.anio" name="anio" required></ion-input>
       </ion-item>
@@ -49,21 +55,34 @@
       </ion-item>
 
       <ion-item>
-        <ion-input label="Teléfono celular" labelPlacement="floating" type="tel" placeholder="+569" [(ngModel)]="publicacion.telefono" name="telefono" required></ion-input>
+        <ion-input 
+          label="Teléfono celular" 
+          labelPlacement="floating" 
+          type="tel" 
+          placeholder="+569" 
+          [(ngModel)]="publicacion.telefono" 
+          name="telefono" 
+          required 
+          pattern="^\+569\d{8}$" 
+          #telefono="ngModel">
+        </ion-input>
       </ion-item>
+      <ion-text color="danger" *ngIf="telefono.invalid && telefono.touched">
+        <p *ngIf="telefono.errors?.['required']">El número de teléfono es requerido.</p>
+        <p *ngIf="telefono.errors?.['pattern']">El número de teléfono debe tener el formato: +569 xxxxxxxx.</p>
+      </ion-text>
 
       <ion-item>
-        <ion-label>Precio </ion-label>
-        <ion-input type="number"  [(ngModel)]="publicacion.precio" name="precio" required></ion-input>
+        <ion-label>Precio</ion-label>
+        <ion-input type="number" [(ngModel)]="publicacion.precio" name="precio" required></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-textarea label="Descripción" labelPlacement="floating" autoGrow="true" style="min-height: 150px;" [(ngModel)]="publicacion.descripcion" name="descripcion" required></ion-textarea>
       </ion-item>
 
-
+      <!-- Botón dentro del formulario -->
+      <ion-button expand="full" shape="round" color="readcyclecolor" type="submit">Enviar</ion-button>
     </form>
-    <ion-button expand="full" shape="round" color="readcyclecolor" (click)="guardarPublicacion()">Enviar</ion-button>
   </div>
-
 </ion-content>

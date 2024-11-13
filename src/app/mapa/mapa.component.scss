@@ -1,7 +1,5 @@
-/* CSS de tu componente mapa */
+/* mapa.component.scss */
 #map {
-    height: 100%; /* Ajusta al tamaño del contenedor */
     width: 100%;
-    position: relative;
-    z-index: 0; /* Asegúrate de que tenga una prioridad más baja que otros elementos superpuestos */
-}
+    height: 300px; /* Puedes ajustar esta altura según tu diseño */
+  }

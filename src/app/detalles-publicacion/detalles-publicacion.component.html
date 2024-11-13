@@ -10,55 +10,57 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-
-  
   <ion-card class="card-detalles">
-      <!-- Carrusel de imágenes usando Swiper -->
-  <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide" *ngFor="let imagenUrl of publicacion.imagenesUrl" (click)="verImagen(imagenUrl)">
-        <img [src]="imagenUrl" alt="Imagen del libro" style="width: 100%; height: 150px; object-fit: cover;" />
+    <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide" *ngFor="let imagenUrl of publicacion.imagenesUrl" (click)="verImagen(imagenUrl)">
+          <img [src]="imagenUrl" alt="Imagen del libro" style="width: 100%; height: 150px; object-fit: cover;" />
+        </div>
       </div>
+      <div class="swiper-pagination"></div>
     </div>
-    <!-- Paginación del carrusel -->
-    <div class="swiper-pagination"></div>
-  </div>
 
-  <!-- Mostrar icono si no hay imágenes o si imagenesUrl no existe -->
-  <ng-template #noImages>
-    <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-      <ion-icon name="image-outline" size="large"></ion-icon>
-    </div>
-  </ng-template>
+    <ng-template #noImages>
+      <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+        <ion-thumbnail>
+          <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+        </ion-thumbnail>
+      </div>
+    </ng-template>
+
     <ion-card-header>
       <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
       <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
     </ion-card-header>
-    
 
     <ion-card-content>
       <div class="info-detalles">
         <p><strong>Descripcion:</strong></p>
         <div class="info-contacto">
-        <p style="margin: 20px;"><strong></strong>{{ publicacion.descripcion }}</p>
-      </div>
-        <p><strong></strong>Estado: {{ publicacion.estado }}</p>
-        <p><strong></strong>Año: {{ publicacion.anio }}</p>
-        <p><strong></strong>precio: {{ publicacion.precio | currency:'$':'symbol':'1.0-0' }}</p>
+          <p style="margin: 20px;">{{ publicacion.descripcion }}</p>
+        </div>
+        <p><strong>Estado:</strong> {{ publicacion.estado }}</p>
+        <p><strong>Año:</strong> {{ publicacion.anio }}</p>
+        <p><strong>Precio:</strong> {{ publicacion.precio | currency:'$':'symbol':'1.0-0' }}</p>
       </div>
 
       <div class="info-contacto">
         <p><strong>Contacto:</strong></p>
         <p><strong>Correo Electrónico:</strong> {{ publicacion.correoelectronico }}</p>
         <p><strong>Número de Teléfono:</strong> {{ publicacion.telefono }}</p>
-        <p></p>
       </div>
 
       <p>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }}</p>
-      <p><strong>ubicacion: {{publicacion.coordenadas?.lat}} </strong></p>
-      <p><strong>ubicacion: {{publicacion.coordenadas?.lng}} </strong></p>
+
+      <div><p><strong>Ubicación aproximada: {{ comuna }} </strong></p></div>
+
+      <div style="height: 400px;">
+        <app-mapa 
+          *ngIf="publicacion.coordenadas" 
+          [lat]="publicacion.coordenadas.lat" 
+          [lng]="publicacion.coordenadas.lng">
+        </app-mapa>
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>
-
-

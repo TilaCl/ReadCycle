@@ -1,1 +1,12 @@
-<div id="map" style="height: 200px; margin-top: 20px;"></div>
+<google-map 
+  [center]="{ lat: lat, lng: lng }" 
+  [zoom]="zoom" 
+  [maxZoom]="5" 
+  height="400px" 
+  width="100%">
+  <map-circle 
+    [center]="approxLocation" 
+    [radius]="2000" 
+    [options]="circleOptions">
+  </map-circle>
+</google-map>

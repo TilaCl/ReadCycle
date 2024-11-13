@@ -1,23 +1,49 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Publicacion, PublicacionService } from 'src/services/publicacion.service';
 import { ModalController } from '@ionic/angular';
 import { Auth } from '@angular/fire/auth'; // Para manejar el usuario autenticado
 import { Router } from '@angular/router';
 import { Timestamp } from 'firebase/firestore';  // Importar Timestamp
 import { VistapreviaimagenComponent } from '../vistapreviaimagen/vistapreviaimagen.component';
+import { GeocodingService } from 'src/services/geocoding.service';
+
 
 @Component({
   selector: 'app-detalles-publicacion',
   templateUrl: './detalles-publicacion.component.html',
   styleUrls: ['./detalles-publicacion.component.scss']
 })
-export class DetallesPublicacionComponent  {
+export class DetallesPublicacionComponent  implements OnInit{
+  
   @Input() publicacion!: Publicacion; // Recibir la publicación seleccionada
+  comuna: string | null = null; // Atributo para almacenar la comuna
 
-  constructor(private modalController: ModalController, private publicacionService: PublicacionService, private auth: Auth,
+  constructor(private modalController: ModalController, 
+    private geocodingService: GeocodingService,
+    private publicacionService: PublicacionService, 
+    private auth: Auth,
     private router: Router) {}
 
-
+    ngOnInit() {
+      // Llamar a la función para obtener la comuna al cargar el componente
+      if (this.publicacion.coordenadas) {
+        const { lat, lng } = this.publicacion.coordenadas;
+        this.obtenerComuna(lat, lng);
+      }
+    }
+  
+    // Función para obtener y asignar la comuna
+    obtenerComuna(lat: number, lng: number) {
+      this.geocodingService.obtenerComunaDesdeLatLng(lat, lng)
+        .then(comuna => {
+          this.comuna = comuna; // Asigna la comuna obtenida
+          console.log(`Comuna obtenida: ${comuna}`);
+        })
+        .catch(error => {
+          console.error(error);
+          this.comuna = 'Error al obtener la comuna';
+        });
+    }
 
 
 
@@ -31,13 +57,12 @@ export class DetallesPublicacionComponent  {
     }
 
 
-
-
   cerrarModal() {
     this.modalController.dismiss();
   }
 
   calcularTiempoTranscurrido(fecha: Date | Timestamp): string {
+    
     const ahora = new Date();
     
     // Si la fecha es un Timestamp de Firestore, convertirla a Date

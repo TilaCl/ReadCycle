@@ -35,4 +35,29 @@ export class GeocodingService {
       }
     });
   }
+  obtenerComunaDesdeLatLng(lat: number, lng: number): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      const geocoder = new google.maps.Geocoder();
+      const latlng = new google.maps.LatLng(lat, lng);
+  
+      geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK && results && results[0]) { // Verificación adicional
+          // Buscar la comuna en los componentes de la dirección
+          const addressComponents = results[0].address_components;
+          const comuna = addressComponents.find(component =>
+            component.types.includes('locality')
+          );
+  
+          if (comuna) {
+            resolve(comuna.long_name); // Retorna el nombre de la comuna
+          } else {
+            resolve(null); // Comuna no encontrada
+          }
+        } else {
+          reject('No se pudo obtener la comuna');
+        }
+      });
+    });
+  }
+  
 }

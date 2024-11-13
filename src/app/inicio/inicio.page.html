@@ -1,4 +1,4 @@
-<ion-header [translucent]="true" >
+<ion-header [translucent]="true">
   <ion-toolbar color="readcyclecolor">
     <ion-searchbar animated="true" placeholder="Buscar"></ion-searchbar>
   </ion-toolbar>
@@ -6,27 +6,46 @@
 
 <ion-content class="ion-padding">
   <ion-list>
-    <ion-card *ngFor="let publicacion of publicaciones$ | async" (click)="abrirModal(publicacion)" class="card-detalles">
-      <ion-card-header>
-        <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
-        <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
-      </ion-card-header>
+    <ion-card *ngFor="let publicacion of publicaciones$ | async" (click)="abrirModal(publicacion)" class="card-detalles"
+      style="display: flex; align-items: center;">
 
-
-      <!-- Carrusel de imágenes usando Swiper -->
-      <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="swiper-container">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide" *ngFor="let imagenUrl of publicacion.imagenesUrl">
-            <img [src]="imagenUrl" alt="Imagen del libro" style="width: 100%; height: 150px; object-fit: cover;" />
-          </div>
-        </div>
-        <!-- Paginación del carrusel -->
-        <div class="swiper-pagination"></div>
+      <!-- Primera Imagen al costado izquierdo -->
+      <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages"
+        style="width: 100px; height: 150px; margin-right: 10px;">
+        <img [src]="publicacion.imagenesUrl[0]" alt="Imagen del libro"
+          style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" />
       </div>
 
-      <!-- Mostrar icono si no hay imágenes o si imagenesUrl no existe -->
+      <!-- Contenido del card -->
+      <div style="flex: 1;">
+        <ion-card-header>
+          <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
+          <ion-card-subtitle>Genero: {{ publicacion.genero }}</ion-card-subtitle>
+          <ion-card-subtitle>Autor: {{ publicacion.autor }}</ion-card-subtitle>
+          <h4>
+            <p><strong></strong>
+              {{ publicacion.precio === 0 ? 'Intercambio' : (publicacion.precio | currency:'$':'symbol':'1.0-0') }}
+            </p>
+          </h4>
+          <p>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }}</p>
+          <!-- <ion-card-subtitle>Comuna: {{ publicacion.comuna }}</ion-card-subtitle>
+          <ion-card-subtitle>Publicado el {{ publicacion.fechaPublicacion | date:'dd/MM/yyyy' }}</ion-card-subtitle> -->
+        </ion-card-header>
+      </div>
+
+<!-- Botón de favoritos y precio -->
+<div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
+  <!-- Botón de favoritos -->
+  <ion-button fill="clear" [color]="publicacion.esFavorito ? 'danger' : 'medium'"
+    (click)="onAnadirAFavoritos(publicacion, $event)">
+    <ion-icon [name]="publicacion.esFavorito ? 'heart' : 'heart-outline'"></ion-icon>
+  </ion-button>
+</div>
+
+      <!-- Plantilla en caso de que no haya imágenes -->
       <ng-template #noImages>
-        <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+        <div
+          style="width: 100px; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
           <ion-icon name="image-outline" size="large"></ion-icon>
         </div>
       </ng-template>

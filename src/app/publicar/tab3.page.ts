@@ -1,11 +1,13 @@
+import { AuthService } from 'src/services/auth.service';
 import { GeocodingService } from './../../services/geocoding.service';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from 'src/services/usuario.service';
 import { PublicacionService } from 'src/services/publicacion.service';
 import { ImageUploadService } from 'src/services/image-upload.service';
 import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -14,7 +16,16 @@ import { ToastController } from '@ionic/angular';
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss']
 })
-export class Tab3Page {
+export class Tab3Page implements OnInit{
+  autores: string[] = [];
+  generos: string[] = [];
+  autoresFiltrados: string[] = [];
+  generosFiltrados: string[] = [];
+  mostrarSugerenciasGenero = false;
+  mostrarSugerenciasAutor = false;
+  correo: string = '';
+  celular: string = '+56';
+  user: any;
 
   publicacion = {
     titulolibro: '',
@@ -26,19 +37,85 @@ export class Tab3Page {
     precio: 0,
     descripcion: '',
     anio: 0,
+    esFavorito: false,
     coordenadas: { lat: 0, lng: 0 }
   };
   fotos: File[] = []; // Array para almacenar las fotos seleccionadas
 
   constructor(
     private usuarioService: UsuarioService,
+    private authService: AuthService,
     private geocodingService: GeocodingService,
     private publicacionService: PublicacionService,
     private auth: Auth,
     private router: Router,
     private toastController: ToastController,
-    private imageUploadService: ImageUploadService
+    private imageUploadService: ImageUploadService,
+    private http: HttpClient, 
+    private modalController: ModalController
   ) { }
+
+  ngOnInit() {
+    this.authService.getUser().subscribe(async user => {
+      this.user = user;
+      if (user) {
+        await this.loadUserData(user.id);
+      }
+    });
+    this.cargarAutores();
+    this.cargarGeneros();
+
+  }
+  async loadUserData(userId: string) {
+    const usuario = await this.usuarioService.getUsuario(userId);
+    if (usuario) {
+      this.correo = usuario.correo;
+      this.celular = usuario.celular;
+
+    }
+  }
+ cargarAutores() {
+    this.http.get<string[]>('/assets/autor.json').subscribe(data => {
+      this.autores = data;
+    });
+  }
+
+  cargarGeneros() {
+    this.http.get<string[]>('/assets/genero.json').subscribe(data => {
+      this.generos = data;
+    });
+  }
+
+  filtrarGeneros(event: any) {
+    const valor = event.target.value.toLowerCase();
+    if (valor) {
+      this.generosFiltrados = this.generos.filter(genero => genero.toLowerCase().includes(valor));
+      this.mostrarSugerenciasGenero = this.generosFiltrados.length > 0;
+    } else {
+      this.mostrarSugerenciasGenero = false;
+    }
+  }
+
+  filtrarAutores(event: any) {
+    const valor = event.target.value.toLowerCase();
+    if (valor) {
+      this.autoresFiltrados = this.autores.filter(autor => autor.toLowerCase().includes(valor));
+      this.mostrarSugerenciasAutor = this.autoresFiltrados.length > 0;
+    } else {
+      this.mostrarSugerenciasAutor = false;
+    }
+  }
+
+  seleccionarGenero(genero: string) {
+    this.publicacion.genero = genero;
+    this.mostrarSugerenciasGenero = false;
+  }
+
+  seleccionarAutor(autor: string) {
+    this.publicacion.autor = autor;
+    this.mostrarSugerenciasAutor = false;
+  }
+
 
   // Validación del campo "Año" para asegurarse de que no exceda los 4 dígitos
   validateLength(event: any) {
@@ -60,7 +137,7 @@ export class Tab3Page {
 
   // Método para guardar la publicación
   async guardarPublicacion() {
-    const { titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio } = this.publicacion;
+    const { titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, esFavorito } = this.publicacion;
     
     try {
       // Obtener las coordenadas usando geocodingService
@@ -73,7 +150,7 @@ export class Tab3Page {
   
       // Crear la publicación con coordenadas
       const publicacionId = await this.publicacionService.crearPublicacion(
-        titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, coordenadas
+        titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, esFavorito ,coordenadas
       );
       console.log('Publicación creada con éxito');
   
@@ -110,6 +187,7 @@ resetForm() {
     precio: 0,
     descripcion: '',
     anio: 0,
+    esFavorito: false,
     coordenadas: { lat: 0, lng: 0 },
   };
   this.fotos = []; // Limpiar las fotos seleccionadas

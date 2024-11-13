@@ -5,6 +5,8 @@ import { docData, collectionData, collectionGroup } from '@angular/fire/firestor
 import { Observable, forkJoin, from, switchMap } from 'rxjs';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { Timestamp } from 'firebase/firestore';
+import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 
 export interface Publicacion {
@@ -20,7 +22,8 @@ export interface Publicacion {
   anio: number;
   fechaCreacion: Timestamp;
   coordenadas?: { lat: number; lng: number };
-  imagenesUrl?: string[];  // Nuevo campo opcional para almacenar las URLs de las imágenes
+  imagenesUrl?: string[];
+  esFavorito?: boolean;  // Nueva propiedad opcional
 }
 
 @Injectable({
@@ -52,6 +55,7 @@ export class PublicacionService {
     precio: number, 
     descripcion: string, 
     anio: number,
+    esFavorito: boolean,
     coordenadas: { lat: number; lng: number }): Promise<string> {
 
     const userId = this.auth.currentUser?.uid;
@@ -71,7 +75,10 @@ export class PublicacionService {
             descripcion,
             anio,
             fechaCreacion,
+            esFavorito,
             coordenadas
+            
+            
         };
 
         await setDoc(doc(this.firestore, `Usuarios/${userId}/publicaciones/${publicacionId}`), publicacion);
@@ -134,6 +141,55 @@ async eliminarPublicacion(userId: string, publicacionId: string): Promise<void> 
 obtenerTodasLasPublicaciones(): Observable<Publicacion[]> {
   const publicacionesRef = collectionGroup(this.firestore, 'publicaciones');
   return collectionData(publicacionesRef, { idField: 'id' }) as Observable<Publicacion[]>;
+}
+
+// Función para añadir una publicación a la subcolección favoritos del usuario
+async anadirAFavoritos(publicacion: Publicacion): Promise<void> {
+  const userId = this.auth.currentUser?.uid;
+
+  if (!userId) {
+    console.error('Usuario no autenticado');
+    return;
+  }
+
+  try {
+    const favoritosRef = doc(this.firestore, `Usuarios/${userId}/favoritos/${publicacion.id}`);
+    await setDoc(favoritosRef, publicacion);
+    console.log('Publicación añadida a favoritos con éxito');
+  } catch (error) {
+    console.error('Error al añadir la publicación a favoritos:', error);
+  }
+}
+// Función para obtener las publicaciones en favoritos de un usuario
+obtenerFavoritos(): Observable<Publicacion[]> {
+  const userId = this.auth.currentUser?.uid; // Obtiene el ID del usuario actual
+
+  if (userId) {
+    const favoritosRef = collection(this.firestore, `Usuarios/${userId}/favoritos`);
+    
+    return collectionData(favoritosRef, { idField: 'id' }).pipe(
+      map((data) => 
+        data.map(doc => ({
+          ...doc as Publicacion,
+          esFavorito: true  // Marcamos como favorita esta publicación
+        }))
+      )
+    );
+  } else {
+    console.error('Usuario no autenticado');
+    return of([]); // Si no hay usuario, devolvemos un array vacío
+  }
+}
+
+async quitarDeFavoritos(publicacionId: string): Promise<void> {
+  const userId = this.auth.currentUser?.uid;
+  if (userId) {
+    const favoritosRef = doc(this.firestore, `Usuarios/${userId}/favoritos/${publicacionId}`);
+    await deleteDoc(favoritosRef);
+    console.log('Publicación eliminada de favoritos');
+  } else {
+    console.error('Usuario no autenticado');
+  }
 }
 
 
