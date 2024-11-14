@@ -16,7 +16,7 @@ export interface Publicacion {
   genero: string;
   estado: string;
   correoelectronico: string;
-  telefono: number;
+  telefono: string;
   precio: number;
   descripcion: string;
   anio: number;
@@ -51,7 +51,7 @@ export class PublicacionService {
     genero: string, 
     estado: string, 
     correoelectronico: string, 
-    telefono: number, 
+    telefono: string, 
     precio: number, 
     descripcion: string, 
     anio: number,

@@ -21,7 +21,9 @@ import { VistapreviaimagenComponent } from './vistapreviaimagen/vistapreviaimage
 import { MapaComponent } from './mapa/mapa.component';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { RefreshComponent } from './refresh/refresh.component';
-import { provideHttpClient, HTTP_INTERCEPTORS } from '@angular/common/http'; // <-- Importa provideHttpClient
+import { provideHttpClient } from '@angular/common/http'; // <-- Importa provideHttpClient
+
+
 @NgModule({
   declarations: [AppComponent, 
     DetallesPublicacionComponent,

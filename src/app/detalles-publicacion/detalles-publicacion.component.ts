@@ -8,6 +8,7 @@ import { VistapreviaimagenComponent } from '../vistapreviaimagen/vistapreviaimag
 import { GeocodingService } from 'src/services/geocoding.service';
 
 
+
 @Component({
   selector: 'app-detalles-publicacion',
   templateUrl: './detalles-publicacion.component.html',
@@ -45,16 +46,26 @@ export class DetallesPublicacionComponent  implements OnInit{
         });
     }
 
+      // Función para abrir WhatsApp con el número del vendedor
+  abrirWhatsApp(telefono: string) {
+    const url = `https://wa.me/${telefono}`;
+    window.open(url, '_blank');
+  }
 
+  // Función para abrir el cliente de correo con el email del vendedor
+  enviarCorreo(correo: string) {
+    const mailto = `mailto:${correo}`;
+    window.open(mailto, '_blank');
+  }
 
     
-    async verImagen(imagenUrl: string) {
-      const modal = await this.modalController.create({
-        component: VistapreviaimagenComponent,
-        componentProps: { imagenUrl }
-      });
-      return await modal.present();
-    }
+  async verImagen(imagenUrl: string) {
+    const modal = await this.modalController.create({
+      component: VistapreviaimagenComponent,
+      componentProps: { imagenUrl }
+    });
+    return await modal.present();
+  }
 
 
   cerrarModal() {

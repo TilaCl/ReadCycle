@@ -1,55 +1,44 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="readcyclecolor">
-    <ion-searchbar animated="true" placeholder="Buscar"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterPublicaciones()" animated="true" placeholder="Buscar"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-list>
-    <ion-card *ngFor="let publicacion of publicaciones$ | async" (click)="abrirModal(publicacion)" class="card-detalles"
-      style="display: flex; align-items: center;">
+  <!-- Grid de Publicaciones -->
+  <div class="publicaciones-grid">
+    <ion-card *ngFor="let publicacion of filteredPublicaciones" (click)="abrirModal(publicacion)" class="card-detalles">
 
-      <!-- Primera Imagen al costado izquierdo -->
-      <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages"
-        style="width: 100px; height: 150px; margin-right: 10px;">
-        <img [src]="publicacion.imagenesUrl[0]" alt="Imagen del libro"
-          style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" />
+      <!-- Imagen Principal de la Publicación -->
+      <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="image-container">
+        <img [src]="publicacion.imagenesUrl[0]" alt="Imagen del libro" class="main-image" />
+
+        <!-- Botón de Favoritos en la esquina superior izquierda -->
+        <ion-button fill="clear" [color]="publicacion.esFavorito ? 'danger' : 'medium'" class="favorite-btn"
+          (click)="onAnadirAFavoritos(publicacion, $event)">
+          <ion-icon [name]="publicacion.esFavorito ? 'heart' : 'heart-outline'"></ion-icon>
+        </ion-button>
+
+        <!-- Precio en la esquina superior derecha -->
+        <div class="price-tag">
+          {{ publicacion.precio === 0 ? 'Intercambio' : (publicacion.precio | currency:'$':'symbol':'1.0-0') }}
+        </div>
       </div>
 
-      <!-- Contenido del card -->
-      <div style="flex: 1;">
-        <ion-card-header>
-          <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
-          <ion-card-subtitle>Genero: {{ publicacion.genero }}</ion-card-subtitle>
-          <ion-card-subtitle>Autor: {{ publicacion.autor }}</ion-card-subtitle>
-          <h4>
-            <p><strong></strong>
-              {{ publicacion.precio === 0 ? 'Intercambio' : (publicacion.precio | currency:'$':'symbol':'1.0-0') }}
-            </p>
-          </h4>
-          <p>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }}</p>
-          <!-- <ion-card-subtitle>Comuna: {{ publicacion.comuna }}</ion-card-subtitle>
-          <ion-card-subtitle>Publicado el {{ publicacion.fechaPublicacion | date:'dd/MM/yyyy' }}</ion-card-subtitle> -->
-        </ion-card-header>
-      </div>
-
-<!-- Botón de favoritos y precio -->
-<div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
-  <!-- Botón de favoritos -->
-  <ion-button fill="clear" [color]="publicacion.esFavorito ? 'danger' : 'medium'"
-    (click)="onAnadirAFavoritos(publicacion, $event)">
-    <ion-icon [name]="publicacion.esFavorito ? 'heart' : 'heart-outline'"></ion-icon>
-  </ion-button>
-</div>
+      <!-- Contenido del Card -->
+      <ion-card-header class="card-content">
+        
+        <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
+        <ion-card-subtitle>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }}</ion-card-subtitle>
+        <ion-card-subtitle> {{ comuna }}</ion-card-subtitle>
+      </ion-card-header>
 
       <!-- Plantilla en caso de que no haya imágenes -->
       <ng-template #noImages>
-        <div
-          style="width: 100px; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+        <div class="no-image">
           <ion-icon name="image-outline" size="large"></ion-icon>
         </div>
       </ng-template>
-
     </ion-card>
-  </ion-list>
+  </div>
 </ion-content>

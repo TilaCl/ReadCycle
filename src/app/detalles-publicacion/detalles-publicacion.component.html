@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="readcyclecolor">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-button (click)="cerrarModal()">
         <ion-icon name="arrow-back"></ion-icon>
@@ -10,57 +10,77 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card class="card-detalles">
-    <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="swiper-container">
-      <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let imagenUrl of publicacion.imagenesUrl" (click)="verImagen(imagenUrl)">
-          <img [src]="imagenUrl" alt="Imagen del libro" style="width: 100%; height: 150px; object-fit: cover;" />
-        </div>
-      </div>
-      <div class="swiper-pagination"></div>
+
+
+
+
+
+
+
+  <ng-template #noImages>
+    <div style="width: 100%; height: 200px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+      <ion-thumbnail>
+        <img alt="Placeholder" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+      </ion-thumbnail>
     </div>
+  </ng-template>
 
-    <ng-template #noImages>
-      <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-        <ion-thumbnail>
-          <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-        </ion-thumbnail>
+  <ion-card class="card-detalles">
+  <!-- Galería de imágenes con Bootstrap Carousel -->
+  <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item" *ngFor="let imagenUrl of publicacion.imagenesUrl; let i = index" [class.active]="i === 0">
+        <img [src]="imagenUrl" class="d-block w-100" alt="Imagen del libro" (click)="verImagen(imagenUrl)">
       </div>
-    </ng-template>
-
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+    <!-- Información de la publicación -->
     <ion-card-header>
       <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
       <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
+            <!-- Información de publicación -->
+            <p>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }} en {{ comuna }}</p>
     </ion-card-header>
 
     <ion-card-content>
-      <div class="info-detalles">
-        <p><strong>Descripcion:</strong></p>
-        <div class="info-contacto">
-          <p style="margin: 20px;">{{ publicacion.descripcion }}</p>
-        </div>
-        <p><strong>Estado:</strong> {{ publicacion.estado }}</p>
-        <p><strong>Año:</strong> {{ publicacion.anio }}</p>
-        <p><strong>Precio:</strong> {{ publicacion.precio | currency:'$':'symbol':'1.0-0' }}</p>
+      <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
+      <p><strong>Estado:</strong> {{ publicacion.estado }}</p>
+      <p><strong>Año:</strong> {{ publicacion.anio }}</p>
+      <p><strong>Precio:</strong> {{ publicacion.precio | currency:'$':'symbol':'1.0-0' }}</p>
+      
+      <!-- Botones de contacto -->
+      <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+        <!-- Botón de WhatsApp -->
+        <ion-button fill="clear" color="success" (click)="abrirWhatsApp(publicacion.telefono)">
+          <ion-icon name="logo-whatsapp" slot="icon-only" style="font-size: 40px;"></ion-icon>
+        </ion-button>
+        <!-- Botón de Correo Electrónico -->
+          <ion-button  fill="clear" color="secondary" (click)="enviarCorreo(publicacion.correoelectronico)">
+            <ion-icon name="mail" slot="icon-only" style="font-size: 40px;"></ion-icon>
+          </ion-button>  
+        
       </div>
 
-      <div class="info-contacto">
+      <!-- Información de contacto -->
+      <div class="info-contacto" style="margin-top: 15px;">
         <p><strong>Contacto:</strong></p>
-        <p><strong>Correo Electrónico:</strong> {{ publicacion.correoelectronico }}</p>
-        <p><strong>Número de Teléfono:</strong> {{ publicacion.telefono }}</p>
+        <p><ion-icon name="mail"></ion-icon> {{ publicacion.correoelectronico }}</p>
+        <p><ion-icon name="call"></ion-icon> {{ publicacion.telefono }}</p>
       </div>
 
-      <p>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }}</p>
-
-      <div><p><strong>Ubicación aproximada: {{ comuna }} </strong></p></div>
 
       <div style="height: 400px;">
-        <app-mapa 
-          *ngIf="publicacion.coordenadas" 
-          [lat]="publicacion.coordenadas.lat" 
-          [lng]="publicacion.coordenadas.lng">
-        </app-mapa>
+        <app-mapa *ngIf="publicacion.coordenadas" [lat]="publicacion.coordenadas.lat" [lng]="publicacion.coordenadas.lng"></app-mapa>
       </div>
     </ion-card-content>
   </ion-card>
 </ion-content>
+
