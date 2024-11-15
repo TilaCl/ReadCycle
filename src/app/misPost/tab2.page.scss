@@ -15,14 +15,45 @@
 	padding: 6px;  /* Ajuste más pequeño para que quede más elegante */
 	transition: all 0.3s ease-in-out; /* Transición suave */
   }
-
-  .swiper-container {
+  .icon-container {
+	position: relative;
+	width: 80px;
+	height: 80px;
+	margin: 0 auto 20px;
+  }
+  .main-icon {
 	width: 100%;
-	height: 150px;
-  }
-  
-  .swiper-slide {
+	height: 100%;
+	background-color: var(--ion-color-light);
+	border-radius: 50%;
 	display: flex;
-	justify-content: center;
 	align-items: center;
+	justify-content: center;
   }
+  .main-icon ion-icon {
+	font-size: 48px;
+	color: var(--ion-color-medium);
+  }
+  .sub-icon {
+	position: absolute;
+	bottom: -8px;
+	right: -8px;
+	background-color: var(--ion-color-light);
+	border-radius: 50%;
+	padding: 8px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .sub-icon ion-icon {
+	font-size: 20px;
+	color: var(--ion-color-danger);
+  }
+  h2 {
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 10px;
+  }
+  p {
+	color: var(--ion-color-medium);
+	margin-bottom: 20px;
+  }
+

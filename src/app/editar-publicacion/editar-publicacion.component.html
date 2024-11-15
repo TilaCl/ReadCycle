@@ -10,7 +10,185 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item>
+  <div class="form-container">
+    <!-- Sección de imágenes actuales -->
+    <div class="upload-section ion-margin-bottom">
+      <ion-label class="section-title">Imágenes del Libro</ion-label>
+      <div class="thumbnails-container">
+        <!-- Mostrar el botón de la cámara solo si no se ha alcanzado el máximo de imágenes -->
+        <div *ngIf="(publicacion.imagenesUrl?.length || 0) + imagePreviewUrls.length < 3">
+          <div class="upload-thumbnail">
+            <ion-icon name="camera"></ion-icon>
+            <p>Toca para añadir imagenes</p>
+            <input type="file" (change)="onFilesSelected($event)" multiple accept="image/*" class="file-input" placeholder="." />
+          </div>
+        </div>
+        
+        <!-- Mostrar imágenes existentes -->
+        <div class="upload-thumbnail" *ngFor="let url of publicacion.imagenesUrl || []; let i = index">
+          <img [src]="url" [alt]="'Imagen ' + (i + 1)" />
+          <ion-button fill="clear" class="delete-button" color="danger" (click)="removeExistingImage(i)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+        
+        <!-- Vista previa de nuevas imágenes -->
+        <div class="upload-thumbnail" *ngFor="let preview of imagePreviewUrls; let i = index">
+          <img [src]="preview" [alt]="'Nueva imagen ' + (i + 1)" />
+          <ion-button fill="clear" class="delete-button" color="danger" (click)="removeNewImage(i)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+<div class="form-section">
+  <ion-label class="section-title">Detalles del Libro</ion-label>
+  
+  <ion-item class="custom-item">
+    <ion-input 
+      label="Título del libro" 
+      labelPlacement="floating" 
+      [(ngModel)]="publicacion.titulolibro" 
+      name="titulolibro" 
+      required
+      class="custom-input">
+    </ion-input>
+  </ion-item>
+
+  <div class="input-container">
+    <ion-item class="custom-item">
+      <ion-input 
+        label="Género" 
+        labelPlacement="floating"
+        [(ngModel)]="publicacion.genero" 
+        name="genero" 
+        (ionInput)="filtrarGeneros($event)"
+        class="custom-input">
+      </ion-input>
+    </ion-item>
+    <ion-list *ngIf="mostrarSugerenciasGenero" class="suggestions-list">
+      <ion-item *ngFor="let genero of generosFiltrados" (click)="seleccionarGenero(genero)">
+        {{ genero }}
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div class="input-container">
+    <ion-item class="custom-item">
+      <ion-input 
+        label="Autor" 
+        labelPlacement="floating"
+        [(ngModel)]="publicacion.autor" 
+        name="autor" 
+        (ionInput)="filtrarAutores($event)"
+        class="custom-input">
+      </ion-input>
+    </ion-item>
+    <ion-list *ngIf="mostrarSugerenciasAutor" class="suggestions-list">
+      <ion-item *ngFor="let autor of autoresFiltrados" (click)="seleccionarAutor(autor)">
+        {{ autor }}
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <ion-item class="custom-item">
+    <ion-datetime
+      presentation="year"
+      [(ngModel)]="publicacion.anio"
+      name="anio"
+      required
+      [max]="maxYear"
+      [min]="minYear"
+      class="custom-datetime"
+      preferWheel="true"
+      (ionChange)="onYearChange($event)">
+      <span slot="title">Selecciona el año</span>
+    </ion-datetime>
+  </ion-item>
+
+  <ion-item class="custom-item">
+    <ion-select 
+      label="Estado del libro"
+      labelPlacement="floating"
+      interface="popover" 
+      [(ngModel)]="publicacion.estado" 
+      name="estado" 
+      required
+      class="custom-select">
+      <ion-select-option value="Nuevo">Nuevo</ion-select-option>
+      <ion-select-option value="Usado">Usado</ion-select-option>
+      <ion-select-option value="En mal estado">En mal estado</ion-select-option>
+    </ion-select>
+  </ion-item>
+</div>
+
+<!-- Contact Information Section -->
+<div class="form-section">
+  <ion-label class="section-title">Información de Contacto</ion-label>
+
+  <ion-item class="custom-item">
+    <ion-input 
+      label="Correo Electrónico" 
+      labelPlacement="floating" 
+      type="email" 
+      placeholder="email@dominio.com" 
+      [(ngModel)]="publicacion.correoelectronico" 
+      name="correoelectronico" 
+      required
+      class="custom-input">
+    </ion-input>
+  </ion-item>
+
+  <ion-item class="custom-item">
+    <ion-input 
+      label="Teléfono celular" 
+      labelPlacement="floating" 
+      type="tel" 
+      placeholder="+569" 
+      [(ngModel)]="publicacion.telefono" 
+      name="telefono" 
+      required 
+      pattern="^\+569\d{8}$" 
+      #telefono="ngModel"
+      class="custom-input">
+    </ion-input>
+  </ion-item>
+  <ion-text color="danger" *ngIf="telefono.invalid && telefono.touched" class="error-message">
+    <p *ngIf="telefono.errors?.['required']">El número de teléfono es requerido.</p>
+    <p *ngIf="telefono.errors?.['pattern']">El número de teléfono debe tener el formato: +569 xxxxxxxx.</p>
+  </ion-text>
+
+  <ion-item class="custom-item">
+    <ion-input 
+      label="Precio" 
+      labelPlacement="floating"
+      type="number" 
+      [(ngModel)]="publicacion.precio" 
+      name="precio" 
+      required
+      class="custom-input">
+    </ion-input>
+  </ion-item>
+
+  <ion-item class="custom-item">
+    <ion-textarea 
+      label="Descripción" 
+      labelPlacement="floating" 
+      autoGrow="true" 
+      [(ngModel)]="publicacion.descripcion" 
+      name="descripcion" 
+      required
+      class="custom-textarea">
+    </ion-textarea>
+  </ion-item>
+</div>
+  
+  <!-- <ion-item>
     <ion-label position="floating">Título del Libro</ion-label>
     <ion-input [(ngModel)]="publicacion.titulolibro" required></ion-input>
   </ion-item>
@@ -53,7 +231,7 @@
   <ion-item>
     <ion-label position="floating">Descripción</ion-label>
     <ion-textarea [(ngModel)]="publicacion.descripcion"></ion-textarea>
-  </ion-item>
+  </ion-item> -->
 
   <ion-button expand="full" shape="round" color="readcyclecolor" (click)="guardarCambios()">Guardar Cambios</ion-button>
   <ion-button color="danger" shape="round" expand="full" (click)="eliminarPublicacion()">Eliminar Publicación</ion-button>

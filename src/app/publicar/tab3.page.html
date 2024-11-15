@@ -19,7 +19,7 @@
                 <ion-icon name="close-circle"></ion-icon>
               </ion-button>
             </ion-thumbnail>
-            <ion-thumbnail class="upload-thumbnail" *ngIf="imagePreviewUrls.length < 5">
+            <ion-thumbnail class="upload-thumbnail" *ngIf="imagePreviewUrls.length < 3">
               <ion-icon name="camera"></ion-icon>
               <input type="file" (change)="onFilesSelected($event)" multiple accept="image/*" class="file-input" placeholder="." />
             </ion-thumbnail>
@@ -28,7 +28,7 @@
             Toca para subir imágenes
           </ion-text>
           <ion-text class="upload-text" *ngIf="imagePreviewUrls.length > 0">
-            Máximo 5 imágenes
+            Máximo 3 imágenes
           </ion-text>
         </div>
       </div>

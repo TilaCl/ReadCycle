@@ -9,6 +9,7 @@ import { DetallesPublicacionComponent } from '../detalles-publicacion/detalles-p
 import { AuthService } from 'src/services/auth.service';
 import { UsuarioService } from 'src/services/usuario.service';
 import { LoadingController } from '@ionic/angular';
+import {  Router } from '@angular/router';
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
@@ -24,7 +25,8 @@ export class Tab2Page implements OnInit {
     private modalController: ModalController,
     private authService: AuthService,
     private usuarioService: UsuarioService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private router: Router
   ) 
     {}
   
@@ -33,7 +35,9 @@ export class Tab2Page implements OnInit {
 
   }
 
-
+  creaLibros(){
+    this.router.navigate(['/tabs/tab3']);
+  }
   async cargarData(){
     const loading = await this.showLoading();
     this.authService.getUser().subscribe(async user => {

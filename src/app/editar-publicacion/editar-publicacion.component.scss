@@ -6,30 +6,218 @@
 	--ion-color-shade: var(--ion-color-readcyclecolor-shade);
 	--ion-color-tint: var(--ion-color-readcyclecolor-tint);
 }
-
-.alert-custom {
-    --background: var(--ion-color-readcyclecolor); /* Fondo de la alerta */
-    --color: white; /* Color del texto */
-    --border-radius: 10px;
+/* Form Container Styles */
+.form-container {
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 16px;
   }
   
-  /* Estilo personalizado para los botones */
-  .alert-custom .alert-button {
-    --border-radius: 50px; /* Hacer los botones redondeados */
-    --padding-start: 20px; /* Añadir un poco de espacio para los botones */
-    --padding-end: 20px;
+  .publication-form {
+	background: var(--ion-background-color);
+	border-radius: 16px;
   }
   
-  /* Botón Cancelar: Color de fondo claro, borde redondeado color readcyclecolor */
-  .alert-custom .alert-button.secondary {
-    --background: transparent; /* Fondo transparente */
-    --color: var(--ion-color-readcyclecolor); /* Color de texto */
-    --border: 2px solid var(--ion-color-readcyclecolor); /* Borde del color readcyclecolor */
+  /* Section Styles */
+  .form-section {
+	margin: 24px 0;
+	padding: 16px;
+	background: var(--ion-card-background);
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
-  /* Botón Eliminar: Color de fondo rojo, borde redondeado rojo */
-  .alert-custom .alert-button.danger {
-    --background: transparent; /* Fondo transparente */
-    --color: red; /* Color de texto rojo */
-    --border: 2px solid red; /* Borde rojo */
+  .section-title {
+	display: block;
+	font-size: 1.2rem;
+	font-weight: 600;
+	color: var(--ion-color-readcyclecolor);
+	margin-bottom: 16px;
+	padding-left: 8px;
+  }
+  
+  /* Custom Item Styles */
+  .custom-item {
+	--background: transparent;
+	--border-color: var(--ion-color-medium);
+	--border-radius: 8px;
+	--border-width: 1px;
+	--padding-start: 8px;
+	--padding-end: 8px;
+	margin: 8px 0;
+  }
+  
+  /* Input Styles */
+  .custom-input,
+  .custom-select,
+  .custom-textarea {
+	--padding-start: 8px;
+	--padding-end: 8px;
+	--placeholder-color: var(--ion-color-medium);
+	font-size: 1rem;
+  }
+  
+  /* Image Upload Styles */
+  .image-upload-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+  }
+  
+  .thumbnails-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	justify-content: center;
+	width: 100%;
+	padding: 8px;
+  }
+  
+  .upload-thumbnail {
+	position: relative;
+	width: 100px;
+	height: 100px;
+	--border-radius: 12px;
+	background: var(--ion-color-light);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	cursor: pointer;
+  
+	ion-icon {
+	  font-size: 2rem;
+	  color: var(--ion-color-medium);
+	}
+  
+	img {
+	  width: 100%;
+	  height: 100%;
+	  object-fit: cover;
+	}
+  
+	&:hover {
+	  opacity: 0.9;
+	}
+  
+	.delete-button {
+	  position: absolute;
+	  top: -8px;
+	  right: -8px;
+	  --padding-start: 4px;
+	  --padding-end: 4px;
+	  --padding-top: 4px;
+	  --padding-bottom: 4px;
+	  margin: 0;
+	  height: 24px;
+	  width: 24px;
+  
+	  ion-icon {
+		font-size: 24px;
+		color: var(--ion-color-danger);
+	  }
+	}
+  }
+  
+  .file-input {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+  }
+  
+  .upload-text {
+	color: var(--ion-color-medium);
+	font-size: 0.9rem;
+  }
+  
+  /* Input Container for Suggestions */
+  .input-container {
+	position: relative;
+	margin-bottom: 16px;
+  }
+  
+  /* Suggestions List Styles */
+  .suggestions-list {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	background: var(--ion-background-color);
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	margin-top: 4px;
+	max-height: 200px;
+	overflow-y: auto;
+  
+	ion-item {
+	  --padding-start: 16px;
+	  --padding-end: 16px;
+	  --min-height: 40px;
+	  cursor: pointer;
+  
+	  &:hover {
+		--background: var(--ion-color-light);
+	  }
+	}
+  }
+  
+  /* DateTime Styles */
+  .custom-datetime {
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	padding: 8px 0;
+  }
+  
+  /* Error Message Styles */
+  .error-message {
+	font-size: 0.875rem;
+	margin: 4px 8px;
+	
+	p {
+	  margin: 4px 0;
+	}
+  }
+  
+  /* Submit Button Styles */
+  .submit-button {
+	margin: 24px 16px;
+	--border-radius: 24px;
+	--padding-top: 16px;
+	--padding-bottom: 16px;
+	font-weight: 600;
+	
+	ion-icon {
+	  margin-right: 8px;
+	}
+  }
+  
+  /* Upload Section Styles */
+  .upload-section {
+	background: var(--ion-card-background);
+	padding: 16px;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 480px) {
+	.form-container {
+	  padding: 8px;
+	}
+	
+	.form-section {
+	  padding: 12px;
+	  margin: 16px 0;
+	}
+	
+	.section-title {
+	  font-size: 1.1rem;
+	}
   }

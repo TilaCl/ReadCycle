@@ -9,6 +9,32 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+
+    <!-- Condición para mostrar un mensaje si no hay favoritos -->
+    <div *ngIf="!(publicaciones$ | async)?.length; else misPost" style="text-align: center; margin-top: 20px;">
+      <ion-card class="ion-text-center">
+        <ion-card-content>
+          <div class="icon-container">
+            <div class="main-icon">
+              <ion-icon name="book-outline" size="large"></ion-icon>
+            </div>
+            <div class="sub-icon">
+              <ion-icon name="albums-outline"></ion-icon>
+            </div>
+          </div>
+          <h2>Tu estantería de libros está vacía</h2>
+          <p>
+            Aún no has publicado algún libro. ¡Regala conocimiento y aventuras publicando libros!
+          </p>
+          <ion-button color="readcyclecolor" expand="block" (click)="creaLibros()">
+            Vamos a publicar
+            <ion-icon   name="paper-plane-outline" slot="end"></ion-icon>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+<ng-template #misPost>
   <ion-list>
     <ion-card *ngFor="let publicacion of publicaciones$ | async" (click)="abrirModal(publicacion)"  class="card-detalles">
       <ion-card-header>
@@ -36,8 +62,9 @@
 
       <!-- Icono de edición en la esquina superior derecha -->
       <ion-button fill="clear" color="readcyclecolor" size="small" (click)="editarPublicacion(publicacion, $event)" class="edit-icon">
-        <ion-icon name="create-outline"></ion-icon>
+        <ion-icon name="create-outline" size="large"></ion-icon>
       </ion-button>
     </ion-card>
   </ion-list>
+  </ng-template>
 </ion-content>

@@ -139,7 +139,7 @@ export class Tab3Page implements OnInit{
     const files = event.target.files;
     if (files) {
       // Limit to 5 images
-      const remainingSlots = 5 - this.imagePreviewUrls.length;
+      const remainingSlots = 3 - this.imagePreviewUrls.length;
       const filesToAdd = Array.from(files).slice(0, remainingSlots) as File[];
 
       filesToAdd.forEach(file => {
