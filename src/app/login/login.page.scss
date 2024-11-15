@@ -17,20 +17,12 @@ ion-content {
     /* Centra horizontalmente */
     text-align: center;
     /* Centra el texto */
-    min-height: 80%;
+    min-height: 70%;
     /* Asegura que ocupe al menos la altura de la ventana */
     position: relative;
     /* Permite usar posición relativa en los hijos */
 }
 
-.centered-content img {
-    margin-bottom: 20px;
-    /* Espacio debajo de la imagen */
-    position: relative;
-    /* Permite mover la imagen */
-    top: -20px;
-    /* Mueve la imagen hacia arriba 20px */
-}
 
 .centered-content h1,
 .centered-content h3 {
@@ -38,44 +30,75 @@ ion-content {
     /* Sin márgenes para los encabezados */
 }
 
-.centered-div {
-    text-align: center;
-}
-
-//estilos botones
-.botonesCentrados {
-
-    height: 20%;
+.listarBotones {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
+    flex-direction: column;
+    width: 100%; /* Los botones ocuparán el ancho total */
+    gap: 10px; /* Añade espacio entre cada botón */
 }
 
+
+/* Contenedor de botones que se mostrará en columna */
+.botonesCentrados {
+    width: 100%; /* Asegura que el contenedor ocupe el 100% del ancho */
+    margin: 0;
+    padding: 10px;
+}
+
+/* Ajusta la imagen para alinearla a la izquierda del botón */
 .icono-boton {
     width: 24px;
     height: 24px;
     margin-right: 10px;
+    border-radius: 50%; /* Hace que la imagen sea circular */
 }
 
 .border {
-    border: 1px solid rgba(156, 155, 155, 0.5);
-    border-radius: 10%;
+    padding: 8px 16px;
+    border-radius: 30px; /* Radio consistente en todo el botón */
     box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.288);
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    justify-content: flex-start; /* Alinea el contenido a la izquierda */
+    text-align: center;
 }
-
 //estilos titulo
+
+/* Ajusta el texto para centrarlo verticalmente y alinearlo */
+.border span {
+    flex: 1;
+    text-align: center; /* Centra el texto */
+}
 
 h1 {
     text-align: center;
-    font-family: "Roboto", sans-serif;
-    font-weight: 700;
+    font-family: "rubik", sans-serif;
+    font-weight: 500;
     font-style: italic;
 }
 
 h3 {
     text-align: center;
-    font-family: "Roboto", sans-serif;
-    font-weight: 700;
+    font-family: "rubik", sans-serif;
+    font-weight: 400;
     font-style: italic;
 }
+.google-button {
+    background-color: #ffffff;
+    color: #000;
+}
+
+.facebook-button {
+    background-color: #1877F2;
+    color: #ffffff;
+}
+
+.twitter-button {
+    background-color: #080808;
+    color: #ffffff;
+}
+// p{
+//     margin-top:20px;
+// }

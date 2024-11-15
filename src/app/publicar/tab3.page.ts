@@ -26,6 +26,10 @@ export class Tab3Page implements OnInit{
   correo: string = '';
   celular: string = '+56';
   user: any;
+  maxYear = new Date().getFullYear().toString();
+  minYear = '1900';
+  imagePreviewUrls: string[] = [];
+  selectedFiles: File[] = [];
 
   publicacion = {
     titulolibro: '',
@@ -115,6 +119,11 @@ export class Tab3Page implements OnInit{
     this.publicacion.autor = autor;
     this.mostrarSugerenciasAutor = false;
   }
+  onYearChange(event: any) {
+    // Extract only the year from the datetime value
+    const fullDate = event.detail.value;
+    this.publicacion.anio = parseInt(fullDate.split('-')[0], 10);
+  }
 
 
   // Validación del campo "Año" para asegurarse de que no exceda los 4 dígitos
@@ -128,42 +137,71 @@ export class Tab3Page implements OnInit{
   // Evento para manejar la selección de imágenes
   onFilesSelected(event: any) {
     const files = event.target.files;
-    if (files.length > 3) {
-      this.mostrarToast('Solo puedes seleccionar hasta 3 imágenes');
-      return;
+    if (files) {
+      // Limit to 5 images
+      const remainingSlots = 5 - this.imagePreviewUrls.length;
+      const filesToAdd = Array.from(files).slice(0, remainingSlots) as File[];
+
+      filesToAdd.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imagePreviewUrls.push(e.target.result);
+          this.selectedFiles.push(file);
+        };
+        reader.readAsDataURL(file);
+      });
     }
-    this.fotos = Array.from(files);
   }
 
-  // Método para guardar la publicación
+  removeImage(index: number) {
+    this.imagePreviewUrls.splice(index, 1);
+    this.selectedFiles.splice(index, 1);
+  }
+
   async guardarPublicacion() {
-    const { titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, esFavorito } = this.publicacion;
+    const { 
+      titulolibro, 
+      autor, 
+      genero, 
+      estado, 
+      correoelectronico, 
+      telefono, 
+      precio, 
+      descripcion, 
+      anio, 
+      esFavorito 
+    } = this.publicacion;
     
     try {
+      // Verificar que haya al menos una imagen seleccionada
+      if (this.selectedFiles.length === 0) {
+        this.mostrarToast('Debe seleccionar al menos una imagen');
+        return;
+      }
+  
       // Obtener las coordenadas usando geocodingService
       const coordenadas = await this.geocodingService.obtenerUbicacion();
       
-      // Verificar que las coordenadas estén definidas
       if (!coordenadas || !coordenadas.lat || !coordenadas.lng) {
         throw new Error('No se pudo obtener la ubicación.');
       }
   
       // Crear la publicación con coordenadas
       const publicacionId = await this.publicacionService.crearPublicacion(
-        titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, esFavorito ,coordenadas
+        titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, esFavorito, coordenadas
       );
       console.log('Publicación creada con éxito');
   
       // Subir las imágenes seleccionadas y obtener sus URLs
-      const imagenesUrl = await Promise.all(this.fotos.map((foto, index) => {
+      const imagenesUrl = await Promise.all(this.selectedFiles.map((file, index) => {
         const filePath = `postImg/${this.auth.currentUser?.uid}/${publicacionId}/imagen_${index}`;
-        return this.imageUploadService.uploadImage(foto, filePath).toPromise();
+        return this.imageUploadService.uploadImage(file, filePath).toPromise();
       }));
   
-      // Filtrar valores undefined para asegurar que imagenesUrl sea de tipo string[]
+      // Filtrar valores undefined
       const filteredImagenesUrl = imagenesUrl.filter((url): url is string => url !== undefined);
   
-      // Actualizar la publicación con las URLs de las imágenes en Firestore
+      // Actualizar la publicación con las URLs de las imágenes
       await this.publicacionService.actualizarPublicacion(publicacionId, { imagenesUrl: filteredImagenesUrl });
   
       // Resetear el formulario
@@ -174,6 +212,7 @@ export class Tab3Page implements OnInit{
       this.mostrarToast('Error al crear la publicación');
     }
   }
+  
 
 // Método para reiniciar el formulario
 resetForm() {
@@ -190,9 +229,10 @@ resetForm() {
     esFavorito: false,
     coordenadas: { lat: 0, lng: 0 },
   };
-  this.fotos = []; // Limpiar las fotos seleccionadas
+  // Limpiar las imágenes seleccionadas y las previsualizaciones
+  this.selectedFiles = [];
+  this.imagePreviewUrls = [];
 }
-
   // Método para mostrar el toast
   async mostrarToast(mensaje: string) {
   const toast = await this.toastController.create({

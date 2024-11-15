@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth.service';
 import { UsuarioService } from 'src/services/usuario.service';
 import { ImageUploadService } from 'src/services/image-upload.service';
-import { ActionSheetController, ToastController } from '@ionic/angular';
+import { ActionSheetController, ToastController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab5',
@@ -45,7 +45,8 @@ export class Tab5Page implements OnInit {
     private router: Router,
     public actionSheetCtrl: ActionSheetController,
     private imageUploadService: ImageUploadService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {
@@ -58,11 +59,13 @@ export class Tab5Page implements OnInit {
   }
 
   async loadUserData(userId: string) {
+    const loading = await this.showLoading();
     const usuario = await this.usuarioService.getUsuario(userId);
     if (usuario) {
       this.nickname = usuario.nickname;
       this.celular = usuario.celular;
       this.user.photo = usuario.fotourl; // Carga la foto de perfil si existe
+      loading.dismiss();
     }
   }
 
@@ -150,5 +153,15 @@ isFormValid(): boolean {
     this.authService.logout().then(() => {
       this.router.navigate(['/login']);
     });
+  }
+
+  async showLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Espere un momento',
+      spinner: 'crescent',
+      duration: 5000 // Tiempo máximo en ms, ajusta si es necesario
+    });
+    await loading.present();
+    return loading;
   }
 }

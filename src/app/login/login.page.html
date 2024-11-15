@@ -5,29 +5,31 @@
 
   <div class="centered-content">
 
-    <img src="https://i.ibb.co/MZws5bc/Logo.png" alt="readcycleLogo">
+    <img src="https://i.ibb.co/MZws5bc/Logo.png" alt="readcycleLogo" class="logo">
     <h1>!Bienvenido a ReadCycle!</h1>
-    <br>
+
   </div>
 
-<h3>Puedes iniciar sesión con:</h3>
 </ion-content>
 
+
 <ion-card class="botonesCentrados">
-  
-  <ion-buttons>
-    <ion-button (click)="loginWithGoogle()" class="border">
+  <h3 > Puedes iniciar sesión con </h3>
+  <br>
+  <ion-buttons class="listarBotones">
+    <ion-button (click)="loginWithGoogle()" class="border google-button">
       <img slot="start" src="https://i.ibb.co/MGSvnXL/Google.png" alt="Google" class="icono-boton">
-      <p>Google</p>
+      <span>Continuar con Google</span>
     </ion-button>
-    <ion-button (click)="loginWithFacebook()" class="border">
-      <img slot="start" src="https://i.ibb.co/pLQLgFD/facebook.png" alt="Facebook" class="icono-boton">
-      <p>Facebook</p>
-    </ion-button>
-    <ion-button (click)="loginWithTwitter()" class="border">
+    <ion-button (click)="loginWithTwitter()" class="border twitter-button">
       <img slot="start" src="https://i.ibb.co/pWsYy1h/twitter.png" alt="Twitter" class="icono-boton">
-      <p>X(Twitter)</p>
+      <span>Continuar con  X (Twitter)</span>
     </ion-button>
+    <ion-button (click)="loginWithFacebook()" class="border facebook-button">
+      <img slot="start" src="https://i.ibb.co/pLQLgFD/facebook.png" alt="Facebook" class="icono-boton">
+      <span>Continuar con Facebook</span>
+    </ion-button>
+
   </ion-buttons>
 </ion-card>
 

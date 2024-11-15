@@ -3,9 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { Timestamp } from 'firebase/firestore';
 import { Observable } from 'rxjs';
 import { Publicacion, PublicacionService } from 'src/services/publicacion.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController,LoadingController } from '@ionic/angular';
 import { DetallesPublicacionComponent } from '../detalles-publicacion/detalles-publicacion.component';
 import { UsuarioService } from 'src/services/usuario.service';
+import { Router } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-tab4',
@@ -19,21 +22,27 @@ export class Tab4Page implements OnInit {
   constructor(private publicacionService: PublicacionService,
     private modalController: ModalController,
     private authService: AuthService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private loadingController: LoadingController,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    // Suscríbete al usuario y carga los favoritos
-    this.authService.getUser().subscribe(async user => {
-      this.user = user;
-      if (user) {
-        await this.loadUserData(user.id);
-        this.loadFavoritos(); // Carga los favoritos después de obtener el usuario
-      }
-    });
+    this.cargarData()
   }
 
-
+async cargarData(){
+  const loading = await this.showLoading();
+      // Suscríbete al usuario y carga los favoritos
+      this.authService.getUser().subscribe(async user => {
+        this.user = user;
+        if (user) {
+          await this.loadUserData(user.id);
+          this.loadFavoritos(); // Carga los favoritos después de obtener el usuario
+        }
+      });
+      loading.dismiss();
+}
   // Función para añadir o quitar una publicación de favoritos desde el feed
 onAnadirAFavoritos(publicacion: Publicacion, event: Event) {
   event.stopPropagation(); // Evita abrir el modal al hacer clic en el botón
@@ -51,7 +60,15 @@ onAnadirAFavoritos(publicacion: Publicacion, event: Event) {
   }
 }
 
-
+async showLoading() {
+  const loading = await this.loadingController.create({
+    message: 'Espere un momento',
+    spinner: 'bubbles',
+    duration: 5000 // Tiempo máximo en ms, ajusta si es necesario
+  });
+  await loading.present();
+  return loading;
+}
   async loadUserData(userId: string) {
     const usuario = await this.usuarioService.getUsuario(userId);
   }
@@ -110,5 +127,9 @@ loadFavoritos(): void {
       componentProps: { publicacion } // Pasamos la publicación al modal
     });
     return await modal.present();
+  }
+
+  buscaLibros(){
+    this.router.navigate(['/tabs/tab1']);
   }
 }

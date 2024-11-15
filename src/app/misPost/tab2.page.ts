@@ -8,7 +8,7 @@ import { EditarPublicacionComponent } from '../editar-publicacion/editar-publica
 import { DetallesPublicacionComponent } from '../detalles-publicacion/detalles-publicacion.component';
 import { AuthService } from 'src/services/auth.service';
 import { UsuarioService } from 'src/services/usuario.service';
-
+import { LoadingController } from '@ionic/angular';
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
@@ -23,12 +23,19 @@ export class Tab2Page implements OnInit {
     private auth: Auth,
     private modalController: ModalController,
     private authService: AuthService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private loadingController: LoadingController
   ) 
     {}
   
   ngOnInit() {
-    
+    this.cargarData()
+
+  }
+
+
+  async cargarData(){
+    const loading = await this.showLoading();
     this.authService.getUser().subscribe(async user => {
       this.user = user;
       if (user) {
@@ -36,8 +43,8 @@ export class Tab2Page implements OnInit {
         this.cargarPublicaciones(); // Cargar las publicaciones al iniciar la página
       }
     });
+    loading.dismiss();
   }
-
   async loadUserData(userId: string) {
     const usuario = await this.usuarioService.getUsuario(userId);
   }
@@ -50,7 +57,15 @@ export class Tab2Page implements OnInit {
       console.error('Usuario no autenticado');
     }
   }
-
+  async showLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Espere un momento',
+      spinner: 'bubbles',
+      duration: 5000 // Tiempo máximo en ms, ajusta si es necesario
+    });
+    await loading.present();
+    return loading;
+  }
   // Método para abrir el modal con detalles completos de la publicación
   async abrirModal(publicacion: Publicacion) {
     const modal = await this.modalController.create({

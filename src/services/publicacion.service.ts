@@ -7,7 +7,7 @@ import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage
 import { Timestamp } from 'firebase/firestore';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
-
+import { LoadingController } from '@ionic/angular';
 
 export interface Publicacion {
   id: string;
@@ -31,7 +31,12 @@ export interface Publicacion {
 })
 export class PublicacionService {
 
-  constructor(private firestore: Firestore, private auth: Auth, private storage: Storage) {}
+  constructor(
+    private firestore: Firestore, 
+    private auth: Auth, 
+    private storage: Storage,
+    private loadingController: LoadingController
+    ) {}
   
   // Función para subir múltiples imágenes
     uploadImages(images: File[], path: string): Observable<string[]> {
@@ -90,8 +95,10 @@ export class PublicacionService {
 
   // Obtener todas las publicaciones de un usuario
   obtenerPublicacionesDeUsuario(userId: string): Observable<Publicacion[]> {
+   
     const publicacionesRef = collection(this.firestore, `Usuarios/${userId}/publicaciones`);
     return collectionData(publicacionesRef, { idField: 'id' }) as Observable<Publicacion[]>;
+  
   }
 
 // Actualizar una publicación
@@ -192,6 +199,14 @@ async quitarDeFavoritos(publicacionId: string): Promise<void> {
   }
 }
 
-
+async showLoading() {
+  const loading = await this.loadingController.create({
+    message: 'Espere un momento',
+    spinner: 'bubbles',
+    duration: 5000 // Tiempo máximo en ms, ajusta si es necesario
+  });
+  await loading.present();
+  return loading;
+}
 }
 

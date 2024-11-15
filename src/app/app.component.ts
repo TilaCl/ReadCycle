@@ -16,6 +16,8 @@ export class AppComponent {
       toggleDarkTheme(mediaQuery.matches)
     );
   }
+
+
 }
 
 function toggleDarkTheme(shouldAdd: boolean) {

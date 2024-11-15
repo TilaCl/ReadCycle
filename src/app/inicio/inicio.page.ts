@@ -7,6 +7,7 @@ import { DetallesPublicacionComponent } from '../detalles-publicacion/detalles-p
 import { UsuarioService } from 'src/services/usuario.service';
 import { Timestamp } from 'firebase/firestore';  // Importar Timestamp
 import { GeocodingService } from 'src/services/geocoding.service';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-inicio',
@@ -27,38 +28,54 @@ export class inicioPage implements OnInit {
     private modalController: ModalController,
     private authService: AuthService,
     private usuarioService: UsuarioService,
-    private geocodingService: GeocodingService) {
+    private geocodingService: GeocodingService,
+    private loadingController: LoadingController) {
     
   }
 
   ngOnInit(): void {
-    // Cargar publicaciones y filtrar inicialmente
-    this.publicaciones$ = this.publicacionService.obtenerTodasLasPublicaciones();
-    this.publicaciones$.subscribe(publicaciones => {
-      // Filtrar y ordenar publicaciones con fecha válida
-      this.filteredPublicaciones = publicaciones
-        .filter(publicacion => publicacion.fechaCreacion) // Filtrar publicaciones con fechaCreacion existente
-        .sort((a, b) => {
-          return b.fechaCreacion.toDate().getTime() - a.fechaCreacion.toDate().getTime(); // Ordenar por fecha
-        });
-  
-      // Recorrer cada publicación para obtener sus coordenadas y comuna
-      this.filteredPublicaciones.forEach(publicacion => {
-        if (publicacion.coordenadas) {
-          const { lat, lng } = publicacion.coordenadas;
-          this.obtenerComuna(lat, lng);
-        }
-      });
-    });
-  
-    this.authService.getUser().subscribe(async user => {
-      this.user = user;
-      if (user) {
-        await this.loadUserData(user.id);
-      }
-    });
+    this.cargarData()
+
   }
-  
+
+  async cargarData(){
+    const loading = await this.showLoading();
+        // Cargar publicaciones y filtrar inicialmente
+        this.publicaciones$ = this.publicacionService.obtenerTodasLasPublicaciones();
+        this.publicaciones$.subscribe(publicaciones => {
+          // Filtrar y ordenar publicaciones con fecha válida
+          this.filteredPublicaciones = publicaciones
+            .filter(publicacion => publicacion.fechaCreacion) // Filtrar publicaciones con fechaCreacion existente
+            .sort((a, b) => {
+              return b.fechaCreacion.toDate().getTime() - a.fechaCreacion.toDate().getTime(); // Ordenar por fecha
+            });
+      
+          // Recorrer cada publicación para obtener sus coordenadas y comuna
+          this.filteredPublicaciones.forEach(publicacion => {
+            if (publicacion.coordenadas) {
+              const { lat, lng } = publicacion.coordenadas;
+              this.obtenerComuna(lat, lng);
+            }
+          });
+        });
+      
+        this.authService.getUser().subscribe(async user => {
+          this.user = user;
+          if (user) {
+            await this.loadUserData(user.id);
+          }
+        });
+         loading.dismiss();
+  }
+  async showLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Espere un momento',
+      spinner: 'crescent',
+      duration: 5000 // Tiempo máximo en ms, ajusta si es necesario
+    });
+    await loading.present();
+    return loading;
+  }
   
   // Método para filtrar las publicaciones en función del término de búsqueda
   filterPublicaciones() {
