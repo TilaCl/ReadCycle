@@ -14,4 +14,13 @@
 	gap: 8px; /* Espacio entre los botones */
 
   }
-  
+  .paypal {
+	display: flex; /* Para centrar */
+	justify-content: center; /* Centra horizontalmente */
+	align-items: center; /* Centra verticalmente si es necesario */
+	margin-top: 20px; /* Espaciado superior */
+	transform: scale(0.8); /* Reduce el tamaño del botón (ajusta el valor si es necesario) */
+	max-width: 300px; /* Tamaño máximo */
+	margin-left: auto; /* Centra el contenedor */
+	margin-right: auto; /* Centra el contenedor */
+  }

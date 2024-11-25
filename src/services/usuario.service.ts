@@ -12,6 +12,7 @@ export interface Usuario {
   nombre: string;
   nickname: string;
   celular: string;
+  haDonado: boolean;
 }
 
 @Injectable({
@@ -24,7 +25,7 @@ export class UsuarioService {
   constructor(private firestore: Firestore) {}
 
   // Crear un nuevo usuario
-  async createUsuario(id: string, correo: string, fotourl: string, nombre: string, nickname: string, celular: string): Promise<void> {
+  async createUsuario(id: string, correo: string, fotourl: string, nombre: string, nickname: string, celular: string, haDonado: boolean): Promise<void> {
     const usuarioRef = doc(this.firestore, `Usuarios/${id}`);
 
     const usuario: Usuario = {
@@ -33,7 +34,8 @@ export class UsuarioService {
       fotourl,
       nombre,
       nickname,
-      celular
+      celular,
+      haDonado
     };
 
     await setDoc(usuarioRef, usuario);

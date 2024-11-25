@@ -77,7 +77,7 @@ export class LoginPage {
         this.router.navigate(['/tabs/tab1']);
       } else {
         // Si el usuario no existe, se crea uno nuevo en Firestore
-        await this.usuarioService.createUsuario(user.id, user.email, user.photo, user.name, '', ''); // nickname y celular vacíos
+        await this.usuarioService.createUsuario(user.id, user.email, user.photo, user.name, '', '',false); // nickname y celular vacíos
         console.log('Usuario creado en Firestore:', user);
         
         // Navegar a tab5 para que el usuario complete su información
