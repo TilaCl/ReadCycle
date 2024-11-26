@@ -6,17 +6,19 @@ import { PublicacionService } from 'src/services/publicacion.service';
 import { ImageUploadService } from 'src/services/image-upload.service';
 import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { ModalController, ToastController } from '@ionic/angular';
+import {
+  AlertController,
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
-
-
 
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
-  styleUrls: ['tab3.page.scss']
+  styleUrls: ['tab3.page.scss'],
 })
-export class Tab3Page implements OnInit{
+export class Tab3Page implements OnInit {
   autores: string[] = [];
   generos: string[] = [];
   autoresFiltrados: string[] = [];
@@ -42,7 +44,7 @@ export class Tab3Page implements OnInit{
     descripcion: '',
     anio: 0,
     esFavorito: false,
-    coordenadas: { lat: 0, lng: 0 }
+    coordenadas: { lat: 0, lng: 0 },
   };
   fotos: File[] = []; // Array para almacenar las fotos seleccionadas
 
@@ -55,12 +57,13 @@ export class Tab3Page implements OnInit{
     private router: Router,
     private toastController: ToastController,
     private imageUploadService: ImageUploadService,
-    private http: HttpClient, 
-    private modalController: ModalController
-  ) { }
+    private http: HttpClient,
+    private modalController: ModalController,
+    private alertController: AlertController
+  ) {}
 
   ngOnInit() {
-    this.authService.getUser().subscribe(async user => {
+    this.authService.getUser().subscribe(async (user) => {
       this.user = user;
       if (user) {
         await this.loadUserData(user.id);
@@ -68,24 +71,22 @@ export class Tab3Page implements OnInit{
     });
     this.cargarAutores();
     this.cargarGeneros();
-
   }
   async loadUserData(userId: string) {
     const usuario = await this.usuarioService.getUsuario(userId);
     if (usuario) {
       this.correo = usuario.correo;
       this.celular = usuario.celular;
-
     }
   }
- cargarAutores() {
-    this.http.get<string[]>('/assets/autor.json').subscribe(data => {
+  cargarAutores() {
+    this.http.get<string[]>('/assets/autor.json').subscribe((data) => {
       this.autores = data;
     });
   }
 
   cargarGeneros() {
-    this.http.get<string[]>('/assets/genero.json').subscribe(data => {
+    this.http.get<string[]>('/assets/genero.json').subscribe((data) => {
       this.generos = data;
     });
   }
@@ -93,7 +94,9 @@ export class Tab3Page implements OnInit{
   filtrarGeneros(event: any) {
     const valor = event.target.value.toLowerCase();
     if (valor) {
-      this.generosFiltrados = this.generos.filter(genero => genero.toLowerCase().includes(valor));
+      this.generosFiltrados = this.generos.filter((genero) =>
+        genero.toLowerCase().includes(valor)
+      );
       this.mostrarSugerenciasGenero = this.generosFiltrados.length > 0;
     } else {
       this.mostrarSugerenciasGenero = false;
@@ -103,7 +106,9 @@ export class Tab3Page implements OnInit{
   filtrarAutores(event: any) {
     const valor = event.target.value.toLowerCase();
     if (valor) {
-      this.autoresFiltrados = this.autores.filter(autor => autor.toLowerCase().includes(valor));
+      this.autoresFiltrados = this.autores.filter((autor) =>
+        autor.toLowerCase().includes(valor)
+      );
       this.mostrarSugerenciasAutor = this.autoresFiltrados.length > 0;
     } else {
       this.mostrarSugerenciasAutor = false;
@@ -125,12 +130,11 @@ export class Tab3Page implements OnInit{
     this.publicacion.anio = parseInt(fullDate.split('-')[0], 10);
   }
 
-
   // Validación del campo "Año" para asegurarse de que no exceda los 4 dígitos
   validateLength(event: any) {
     const input = event.target.value;
     if (input.length > 4) {
-      event.target.value = input.slice(0, 4);  // Limita a 4 caracteres
+      event.target.value = input.slice(0, 4); // Limita a 4 caracteres
     }
   }
 
@@ -142,7 +146,7 @@ export class Tab3Page implements OnInit{
       const remainingSlots = 3 - this.imagePreviewUrls.length;
       const filesToAdd = Array.from(files).slice(0, remainingSlots) as File[];
 
-      filesToAdd.forEach(file => {
+      filesToAdd.forEach((file) => {
         const reader = new FileReader();
         reader.onload = (e: any) => {
           this.imagePreviewUrls.push(e.target.result);
@@ -179,11 +183,22 @@ export class Tab3Page implements OnInit{
         return;
       }
   
-      // Obtener las coordenadas usando geocodingService
-      const coordenadas = await this.geocodingService.obtenerUbicacion();
-      
-      if (!coordenadas || !coordenadas.lat || !coordenadas.lng) {
-        throw new Error('No se pudo obtener la ubicación.');
+      // Intentar obtener las coordenadas del usuario
+      let coordenadas;
+      try {
+        coordenadas = await this.geocodingService.obtenerUbicacion();
+        if (!coordenadas || !coordenadas.lat || !coordenadas.lng) {
+          throw new Error('No se pudo obtener la ubicación.');
+        }
+      } catch (error: any) {
+        if (error.message === 'User denied Geolocation' || error.code === 1) {
+          console.warn('Permiso de geolocalización denegado');
+          // Mostrar alerta si el usuario rechaza los permisos
+          this.mostrarAlertaUbicacion();
+          return; // Salir del flujo
+        }
+        console.error('Error al obtener ubicación:', error);
+        throw new Error('No se pudo obtener la ubicación.'); // Lanzar error para manejo general
       }
   
       // Crear la publicación con coordenadas
@@ -209,37 +224,62 @@ export class Tab3Page implements OnInit{
       this.mostrarToast('Publicación creada exitosamente');
     } catch (error) {
       console.error('Error al guardar la publicación: ', error);
+      // Mostrar un mensaje genérico si hubo algún otro tipo de error
       this.mostrarToast('Error al crear la publicación');
     }
   }
-  
 
-// Método para reiniciar el formulario
-resetForm() {
-  this.publicacion = {
-    titulolibro: '',
-    autor: '',
-    genero: '',
-    estado: '',
-    correoelectronico: '',
-    telefono: '',
-    precio: 0,
-    descripcion: '',
-    anio: 0,
-    esFavorito: false,
-    coordenadas: { lat: 0, lng: 0 },
-  };
-  // Limpiar las imágenes seleccionadas y las previsualizaciones
-  this.selectedFiles = [];
-  this.imagePreviewUrls = [];
-}
+  // Método para reiniciar el formulario
+  resetForm() {
+    this.publicacion = {
+      titulolibro: '',
+      autor: '',
+      genero: '',
+      estado: '',
+      correoelectronico: '',
+      telefono: '',
+      precio: 0,
+      descripcion: '',
+      anio: 0,
+      esFavorito: false,
+      coordenadas: { lat: 0, lng: 0 },
+    };
+    // Limpiar las imágenes seleccionadas y las previsualizaciones
+    this.selectedFiles = [];
+    this.imagePreviewUrls = [];
+  }
   // Método para mostrar el toast
   async mostrarToast(mensaje: string) {
-  const toast = await this.toastController.create({
-    message: mensaje,
-    duration: 2000,
-    position: 'bottom',
-  });
-  toast.present();
-}
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2000,
+      position: 'bottom',
+    });
+    toast.present();
+  }
+
+  async mostrarAlertaUbicacion() {
+    const alert = await this.alertController.create({
+      header: 'Permiso de ubicación requerido',
+      message: `La ubicación es crucial para publicar libros en nuestra app. 
+              Por favor, permite el acceso a tu ubicación.`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('El usuario canceló el acceso a la ubicación');
+          },
+        },
+        {
+          text: 'Reintentar',
+          handler: () => {
+            this.guardarPublicacion(); // Reintentar la publicación
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
 }

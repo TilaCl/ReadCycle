@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-
+import { ToastController } from '@ionic/angular';
 @Injectable({
   providedIn: 'root'
 })
@@ -9,7 +9,7 @@ export class GeocodingService {
   lng: number = 0;
   errorMessage: string = '';
 
-  constructor() {}
+  constructor(private toastController: ToastController) {}
 
   // Método para obtener la ubicación del usuario
   obtenerUbicacion(): Promise<{ lat: number, lng: number }> {
@@ -35,6 +35,8 @@ export class GeocodingService {
       }
     });
   }
+
+  
   obtenerComunaDesdeLatLng(lat: number, lng: number): Promise<string | null> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
@@ -59,5 +61,12 @@ export class GeocodingService {
       });
     });
   }
-  
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      color,
+      duration: 3000,
+    });
+    toast.present();
+  }
 }
