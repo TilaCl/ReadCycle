@@ -14,7 +14,7 @@
         <img [src]="publicacion.imagenesUrl[0]" alt="Imagen del libro" class="main-image" />
 
         <!-- Botón de Favoritos en la esquina superior izquierda -->
-        <ion-button fill="clear" [color]="publicacion.esFavorito ? 'danger' : 'medium'" class="favorite-btn"
+        <ion-button fill="clear" [color]="publicacion.esFavorito ? 'danger' : 'large'" class="favorite-btn"
           (click)="onAnadirAFavoritos(publicacion, $event)">
           <ion-icon [name]="publicacion.esFavorito ? 'heart' : 'heart-outline'"></ion-icon>
         </ion-button>
@@ -30,7 +30,7 @@
         
         <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
         <ion-card-subtitle>Publicado hace {{ calcularTiempoTranscurrido(publicacion.fechaCreacion) }}</ion-card-subtitle>
-        <ion-card-subtitle> {{ comuna }}</ion-card-subtitle>
+        <ion-card-subtitle> {{ publicacion.comuna }}</ion-card-subtitle>
       </ion-card-header>
 
       <!-- Plantilla en caso de que no haya imágenes -->
