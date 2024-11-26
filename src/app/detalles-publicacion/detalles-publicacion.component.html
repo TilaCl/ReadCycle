@@ -33,15 +33,20 @@
         <img [src]="imagenUrl" class="d-block w-100" alt="Imagen del libro" (click)="verImagen(imagenUrl)">
       </div>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+  
+    <!-- Botón "Anterior" solo aparece si hay más de 1 imagen -->
+    <button *ngIf="publicacion.imagenesUrl.length > 1" class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Previous</span>
     </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+  
+    <!-- Botón "Siguiente" solo aparece si hay más de 1 imagen -->
+    <button *ngIf="publicacion.imagenesUrl.length > 1" class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Next</span>
     </button>
   </div>
+  
     <!-- Información de la publicación -->
     <ion-card-header>
       <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>

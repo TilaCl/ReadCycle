@@ -212,6 +212,7 @@ export class Tab3Page implements OnInit{
       this.mostrarToast('Error al crear la publicación');
     }
   }
+
   
 
 // Método para reiniciar el formulario
