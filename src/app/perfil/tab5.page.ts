@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth.service';
 import { UsuarioService } from 'src/services/usuario.service';
 import { ImageUploadService } from 'src/services/image-upload.service';
-import { ActionSheetController, ToastController, LoadingController } from '@ionic/angular';
+import {  ToastController, LoadingController } from '@ionic/angular';
+
+declare const paypal: any;
 
 @Component({
   selector: 'app-tab5',
@@ -16,44 +18,27 @@ export class Tab5Page implements OnInit {
   celular: string = '+56';
   isEditCardVisible = false; // Controla la visibilidad del card para editar perfil
 
-  public actionSheetButtons = [
-    {
-      text: 'Donar $10.000 pesos',
-      role: 'destructive',
-      handler: () => {
-        console.log('Donación de $10.000 realizada');
-      }
-    },
-    {
-      text: 'Donar $1.000 pesos',
-      handler: () => {
-        console.log('Donación de $1.000 realizada');
-      }
-    },
-    {
-      text: 'Salir',
-      role: 'cancel',
-      handler: () => {
-        console.log('Donación cancelada');
-      },
-    },
-  ];
+
 
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
     private router: Router,
-    public actionSheetCtrl: ActionSheetController,
     private imageUploadService: ImageUploadService,
     private toastController: ToastController,
     private loadingController: LoadingController
   ) {}
 
   ngOnInit() {
-    this.authService.getUser().subscribe(async user => {
+    this.authService.getUser().subscribe(async (user) => {
       this.user = user;
       if (user) {
-        await this.loadUserData(user.id);
+        await this.loadUserData(user.id); // Carga la información del usuario
+      }
+  
+      // Inicializar los botones de PayPal después de cargar los datos del usuario
+      if (this.user) {
+        this.initPayPalButtons();
       }
     });
   }
@@ -163,5 +148,54 @@ isFormValid(): boolean {
     });
     await loading.present();
     return loading;
+  }
+  initPayPalButtons(): void {
+    paypal.Buttons({
+      createOrder: (data: any, actions: any) => {
+        return actions.order.create({
+          purchase_units: [
+            {
+              amount: {
+                value: '1.00', // Monto para $1 USD
+              },
+            },
+          ],
+        });
+      },
+      onApprove: async (data: any, actions: any) => {
+        const order = await actions.order.capture();
+        console.log('Pago completado: ', order);
+
+        // Actualizar el estado de haDonado en Firebase
+        this.usuarioService.updateUsuario(this.user.id, { haDonado: true })
+          .then(() => {
+            this.user.haDonado = true;
+            this.mostrarToast('Gracias por tu donación de $1 USD 🙌');
+          })
+          .catch(error => {
+            console.error('Error actualizando Firestore:', error);
+            this.mostrarToast('Error al registrar la donación.');
+          });
+      },
+      onError: (err: any) => {
+        console.error('Error en PayPal:', err);
+        this.mostrarToast('Error en el proceso de pago. Intenta nuevamente.');
+      },
+    }).render('#paypal-button-container-1'); // Contenedor para el botón de $1 USD
+  }
+  resetearDonationStatus(): void {
+    if (this.user) {
+      this.usuarioService.updateUsuario(this.user.id, { haDonado: false })
+        .then(() => {
+          this.user.haDonado = false; // Actualiza el estado localmente
+          this.mostrarToast('El estado de la donación ha sido reseteado.');
+        })
+        .catch(error => {
+          console.error('Error al resetear el estado de donación:', error);
+          this.mostrarToast('Error al intentar resetear el estado. Inténtalo nuevamente.');
+        });
+    } else {
+      this.mostrarToast('No se pudo resetear el estado porque no se encontró un usuario.');
+    }
   }
 }

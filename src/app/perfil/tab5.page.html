@@ -74,17 +74,46 @@
 
       <br />
       <!-- Botón y Action Sheet para Donar -->
-      <ion-button id="open-action-sheet" color="primary" fill="solid">
-        Donar
-      </ion-button>
-      <ion-action-sheet trigger="open-action-sheet" header="Donando eliminas anuncios!" [buttons]="actionSheetButtons"></ion-action-sheet>
-      <img src="https://i.ibb.co/QrfXWw9/corona.png" style="width: 30px; position: relative; bottom: -15px;" alt="" />
+      <div class="paypal" id="paypal-button-container-1"></div>
       <p style="font-size: medium;">¡Elimina anuncios!</p>
-
+      <div style="margin-top: 20px;">
+        <h1 *ngIf="user?.haDonado; else noDonationMessage">¡Gracias por tu donación! 🙌</h1>
+        <ng-template #noDonationMessage>
+          <h1>Aún no has donado. 💚</h1>
+          <p>
+            haDonado : {{ user.haDonado }}
+          </p>
+          
+        </ng-template>
+      </div>
       <!-- Botón para cerrar sesión -->
       <ion-button (click)="logout()" color="readcyclecolor" style="padding: 5%;">
         Cerrar Sesión
       </ion-button>
+        <!-- Botón para resetear donación -->
+      <ion-button (click)="resetearDonationStatus()" color="danger">Reset Donación (pruebas)</ion-button>
     </ion-card>
   </div>
 </ion-content>
+
+
+
+
+ <!-- Botones de PayPal
+    <div id="paypal-button-container-1"></div>
+  manueldiaz@gmail.com
+  12345678
+
+       <div class="paypal" id="paypal-button-container-1"></div>
+       <img src="https://i.ibb.co/QrfXWw9/corona.png" style="width: 30px; position: relative; bottom: -15px;" alt="" />
+       <p style="font-size: medium;">¡Elimina anuncios!</p>
+       <div style="margin-top: 20px;">
+         <h1 *ngIf="user?.haDonado; else noDonationMessage">¡Gracias por tu donación! 🙌</h1>
+         <ng-template #noDonationMessage>
+           <h1>Aún no has donado. 💚</h1>
+         </ng-template>
+       </div>
+ -->
+
+
+

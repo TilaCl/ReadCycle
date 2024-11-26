@@ -34,11 +34,15 @@
   
   .favorite-btn {
 	position: absolute;
-	top: 10px;
-	left: 10px;
+	top: 5px;
+	left: 2px;
 	z-index: 10;
-	color: white;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Sombra con transparencia */
+	border-radius: 40%; /* Hace el botón más circular */
+	backdrop-filter: blur(5px); /* Efecto de desenfoque (opcional) */
+	background-color: rgba(255, 255, 255, 0.447);
   }
+  
   
   .price-tag {
 	position: absolute;
