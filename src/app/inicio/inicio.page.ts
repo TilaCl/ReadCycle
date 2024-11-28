@@ -8,8 +8,6 @@ import { UsuarioService } from 'src/services/usuario.service';
 import { Timestamp } from 'firebase/firestore';  // Importar Timestamp
 import { GeocodingService } from 'src/services/geocoding.service';
 import { LoadingController } from '@ionic/angular';
-import {AdMob} from '@capacitor-community/admob';
-import { BannerAdOptions, BannerAdPluginEvents, BannerAdPosition, BannerAdSize } from '@capacitor-community/admob/dist/esm/banner';
 import { initializeApp } from 'firebase/app';
 
 @Component({
@@ -34,38 +32,13 @@ export class inicioPage implements OnInit {
     private geocodingService: GeocodingService,
     private loadingController: LoadingController) {
 
-      this.showBanner();
-    
   }
 
   ngOnInit(): void {
     this.cargarData()
 
   }
-  async showBanner(){
-    try {
-      AdMob.initialize({
-        requestTrackingAuthorization: true,
-        initializeForTesting: false
-      });
-      const options: BannerAdOptions={
-        adId: 'ca-app-pub-1881093244938916/5774095145',
-        adSize: BannerAdSize.BANNER,
-        position: BannerAdPosition.BOTTOM_CENTER,
-        margin:0,
-        isTesting: true,
-      };
-      await AdMob.showBanner(options).then(()=>{
-        console.log('Banner funcionando')
-      });
-      AdMob.addListener(BannerAdPluginEvents.FailedToLoad,(error)=>{
-        console.log(error.code);
-        console.log(error.message);
-      });
-    } catch(e){
-      console.log('error',e);
-    }
-  }
+
 
 
   async cargarData(){
