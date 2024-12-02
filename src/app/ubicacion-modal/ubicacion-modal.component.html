@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Permiso de Ubicación</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal(false)">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div style="text-align: center;">
+    <img src="https://i.ibb.co/6PFPxHg/help1.jpg" alt="Paso 1" />
+    <img src="https://i.ibb.co/b1zRcBx/help2.jpg" alt="Paso 2" />
+    <img src="https://i.ibb.co/x5BsRDg/help3.jpg" alt="Paso 3" />
+    <p style="text-align: left; margin-top: 20px;">
+      1. Abre la configuración de tu navegador.<br />
+      2. Ve a "Privacidad y seguridad".<br />
+      3. Haz clic en "Configuración del sitio".<br />
+      4. Selecciona "Ubicación" y habilítala para esta página.
+    </p>
+    <ion-button (click)="cerrarModal(true)">Reintentar</ion-button>
+  </div>
+</ion-content>

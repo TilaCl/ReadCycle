@@ -12,7 +12,9 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
-
+import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
+import { Platform } from '@ionic/angular';
+import { UbicacionModalComponent } from '../ubicacion-modal/ubicacion-modal.component';
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -58,8 +60,7 @@ export class Tab3Page implements OnInit {
     private toastController: ToastController,
     private imageUploadService: ImageUploadService,
     private http: HttpClient,
-    private modalController: ModalController,
-    private alertController: AlertController
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -161,6 +162,7 @@ export class Tab3Page implements OnInit {
     this.imagePreviewUrls.splice(index, 1);
     this.selectedFiles.splice(index, 1);
   }
+ 
 
   async guardarPublicacion() {
     const { 
@@ -175,60 +177,73 @@ export class Tab3Page implements OnInit {
       anio, 
       esFavorito 
     } = this.publicacion;
-    
+  
     try {
-      // Verificar que haya al menos una imagen seleccionada
       if (this.selectedFiles.length === 0) {
         this.mostrarToast('Debe seleccionar al menos una imagen');
         return;
       }
   
-      // Intentar obtener las coordenadas del usuario
-      let coordenadas;
-      try {
-        coordenadas = await this.geocodingService.obtenerUbicacion();
-        if (!coordenadas || !coordenadas.lat || !coordenadas.lng) {
-          throw new Error('No se pudo obtener la ubicación.');
+      let coordenadas = null;
+      let reintentar = true;
+      let intentos = 0;
+      const maxIntentos = 3;
+  
+      while (!coordenadas && reintentar && intentos < maxIntentos) {
+        try {
+          intentos++;
+          coordenadas = await this.geocodingService.obtenerUbicacion();
+          if (!coordenadas || !coordenadas.lat || !coordenadas.lng) {
+            throw new Error('Coordenadas inválidas');
+          }
+        } catch (error: any) {
+          if (error.message.includes('denied') || error.code === 1) {
+            console.warn('Permiso de geolocalización denegado');
+            reintentar = await this.mostrarModalUbicacion();
+          } else {
+            console.error('Error al obtener ubicación:', error);
+            throw new Error('No se pudo obtener la ubicación.');
+          }
         }
-      } catch (error: any) {
-        if (error.message === 'User denied Geolocation' || error.code === 1) {
-          console.warn('Permiso de geolocalización denegado');
-          // Mostrar alerta si el usuario rechaza los permisos
-          this.mostrarAlertaUbicacion();
-          return; // Salir del flujo
-        }
-        console.error('Error al obtener ubicación:', error);
-        throw new Error('No se pudo obtener la ubicación.'); // Lanzar error para manejo general
       }
   
-      // Crear la publicación con coordenadas
+      if (!coordenadas) {
+        console.warn('Publicación cancelada debido a falta de permisos o demasiados intentos fallidos.');
+        return;
+      }
+  
       const publicacionId = await this.publicacionService.crearPublicacion(
         titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, esFavorito, coordenadas
       );
       console.log('Publicación creada con éxito');
   
-      // Subir las imágenes seleccionadas y obtener sus URLs
-      const imagenesUrl = await Promise.all(this.selectedFiles.map((file, index) => {
-        const filePath = `postImg/${this.auth.currentUser?.uid}/${publicacionId}/imagen_${index}`;
-        return this.imageUploadService.uploadImage(file, filePath).toPromise();
-      }));
+      // Resolver el Promise antes de usar filter
+      const imagenesUrl = (await Promise.all(
+        this.selectedFiles.map(async (file, index) => {
+          try {
+            const filePath = `postImg/${this.auth.currentUser?.uid}/${publicacionId}/imagen_${index}`;
+            return await this.imageUploadService.uploadImage(file, filePath).toPromise();
+          } catch (error) {
+            console.error(`Error al subir la imagen ${index}:`, error);
+            return null; // Manejar errores individuales de subida
+          }
+        })
+      )).filter((url: string | null | undefined): url is string => url !== null && url !== undefined);
   
-      // Filtrar valores undefined
-      const filteredImagenesUrl = imagenesUrl.filter((url): url is string => url !== undefined);
+      await this.publicacionService.actualizarPublicacion(publicacionId, { imagenesUrl });
   
-      // Actualizar la publicación con las URLs de las imágenes
-      await this.publicacionService.actualizarPublicacion(publicacionId, { imagenesUrl: filteredImagenesUrl });
-  
-      // Resetear el formulario
       this.resetForm();
       this.mostrarToast('Publicación creada exitosamente');
+  
+      // Redirigir a la página de publicaciones del usuario
+      this.router.navigate(['/tab2']);
     } catch (error) {
       console.error('Error al guardar la publicación: ', error);
-      // Mostrar un mensaje genérico si hubo algún otro tipo de error
       this.mostrarToast('Error al crear la publicación');
     }
   }
-
+  
+  
   // Método para reiniciar el formulario
   resetForm() {
     this.publicacion = {
@@ -253,33 +268,23 @@ export class Tab3Page implements OnInit {
     const toast = await this.toastController.create({
       message: mensaje,
       duration: 2000,
-      position: 'bottom',
+      position: 'top',
     });
     toast.present();
   }
 
-  async mostrarAlertaUbicacion() {
-    const alert = await this.alertController.create({
-      header: 'Permiso de ubicación requerido',
-      message: `La ubicación es crucial para publicar libros en nuestra app. 
-              Por favor, permite el acceso a tu ubicación.`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: () => {
-            console.log('El usuario canceló el acceso a la ubicación');
-          },
-        },
-        {
-          text: 'Reintentar',
-          handler: () => {
-            this.guardarPublicacion(); // Reintentar la publicación
-          },
-        },
-      ],
+  async mostrarModalUbicacion(): Promise<boolean> {
+    const modal = await this.modalController.create({
+      component: UbicacionModalComponent,
     });
-
-    await alert.present();
+    await modal.present();
+  
+    // Manejo del resultado del modal
+    const { data } = await modal.onDidDismiss();
+    return data ? data.reintentar : false;
   }
+  
+  
+  
+  
 }

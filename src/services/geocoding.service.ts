@@ -20,22 +20,21 @@ export class GeocodingService {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             console.log('Ubicación obtenida: ', lat, lng);
-            resolve({ lat, lng });  // Resuelve la promesa con las coordenadas
+            resolve({ lat, lng });
           },
           (error) => {
-            this.errorMessage = 'No se pudo obtener la ubicación';
-            console.error(error);
-            reject(this.errorMessage);  // Rechaza la promesa si hay error
+            if (error.code === 1) {
+              reject(new Error('User denied Geolocation'));
+            } else {
+              reject(new Error('No se pudo obtener la ubicación'));
+            }
           }
         );
       } else {
-        this.errorMessage = 'La geolocalización no está soportada en este navegador';
-        console.error(this.errorMessage);
-        reject(this.errorMessage);  // Rechaza la promesa si geolocalización no es soportada
+        reject(new Error('La geolocalización no está soportada en este navegador'));
       }
     });
   }
-
   
   obtenerComunaDesdeLatLng(lat: number, lng: number): Promise<string | null> {
     return new Promise((resolve, reject) => {
