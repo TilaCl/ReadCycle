@@ -9,6 +9,7 @@
 <ion-content class="ion-padding">
   <div class="form-container">
     <form (ngSubmit)="guardarPublicacion()" class="publication-form">
+      <!-- Sección de Imágenes -->
       <div class="upload-section ion-margin-bottom">
         <ion-label class="section-title">Imágenes del Libro</ion-label>
         <div class="image-upload-container">
@@ -21,7 +22,7 @@
             </ion-thumbnail>
             <ion-thumbnail class="upload-thumbnail" *ngIf="imagePreviewUrls.length < 3">
               <ion-icon name="camera"></ion-icon>
-              <input type="file" (change)="onFilesSelected($event)" multiple accept="image/*" class="file-input" placeholder="." />
+              <input type="file" (change)="onFilesSelected($event)" multiple accept="image/*" class="file-input" />
             </ion-thumbnail>
           </div>
           <ion-text class="upload-text" *ngIf="imagePreviewUrls.length === 0">
@@ -33,10 +34,10 @@
         </div>
       </div>
 
-      <!-- Book Details Section -->
+      <!-- Sección de Detalles del Libro -->
       <div class="form-section">
         <ion-label class="section-title">Detalles del Libro</ion-label>
-        
+
         <ion-item class="custom-item">
           <ion-input 
             label="Título del libro" 
@@ -93,7 +94,7 @@
             [max]="maxYear"
             [min]="minYear"
             class="custom-datetime"
-            preferWheel="true"
+            color="readcyclecolor"
             (ionChange)="onYearChange($event)">
             <span slot="title">Selecciona el año</span>
           </ion-datetime>
@@ -115,7 +116,7 @@
         </ion-item>
       </div>
 
-      <!-- Contact Information Section -->
+      <!-- Sección de Información de Contacto -->
       <div class="form-section">
         <ion-label class="section-title">Información de Contacto</ion-label>
 
@@ -128,7 +129,8 @@
             [(ngModel)]="publicacion.correoelectronico" 
             name="correoelectronico" 
             required
-            class="custom-input">
+            class="custom-input"
+            [value]="correo">
           </ion-input>
         </ion-item>
 
@@ -137,23 +139,19 @@
             label="Teléfono celular" 
             labelPlacement="floating" 
             type="tel" 
-            placeholder="+569" 
+            placeholder="+569 xxxxxxxx" 
             [(ngModel)]="publicacion.telefono" 
             name="telefono" 
             required 
             pattern="^\+569\d{8}$" 
-            #telefono="ngModel"
-            class="custom-input">
+            class="custom-input"
+            [value]="celular">
           </ion-input>
         </ion-item>
-        <ion-text color="danger" *ngIf="telefono.invalid && telefono.touched" class="error-message">
-          <p *ngIf="telefono.errors?.['required']">El número de teléfono es requerido.</p>
-          <p *ngIf="telefono.errors?.['pattern']">El número de teléfono debe tener el formato: +569 xxxxxxxx.</p>
-        </ion-text>
 
         <ion-item class="custom-item">
           <ion-input 
-            label="Precio" 
+            label="Precio (CLP)" 
             labelPlacement="floating"
             type="number" 
             [(ngModel)]="publicacion.precio" 

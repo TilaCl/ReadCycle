@@ -1,23 +1,41 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="readcyclecolor">
     <ion-title>Permiso de Ubicación</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="cerrarModal(false)">Cerrar</ion-button>
+      <ion-button (click)="cerrarModal(false)">
+        <ion-icon name="close-circle-outline"></ion-icon>
+        Cerrar
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div style="text-align: center;">
-    <img src="https://i.ibb.co/6PFPxHg/help1.jpg" alt="Paso 1" />
-    <img src="https://i.ibb.co/b1zRcBx/help2.jpg" alt="Paso 2" />
-    <img src="https://i.ibb.co/x5BsRDg/help3.jpg" alt="Paso 3" />
-    <p style="text-align: left; margin-top: 20px;">
-      1. Abre la configuración de tu navegador.<br />
-      2. Ve a "Privacidad y seguridad".<br />
-      3. Haz clic en "Configuración del sitio".<br />
-      4. Selecciona "Ubicación" y habilítala para esta página.
-    </p>
-    <ion-button (click)="cerrarModal(true)">Reintentar</ion-button>
+  <div class="container mt-4">
+    <div class="text-center mb-4">
+      <h3 class="text fw-bold">¡Hola!</h3>
+      <p class="lead">
+        Necesitamos acceder a tu ubicación aproximada para poder publicar el libro.
+        No te preocupes, no estamos guardando tu ubicación real; usamos un sistema de aproximación de
+        <b>10 km</b> solo para mostrar un radio en la comuna. ¡Tu privacidad está segura con nosotros!
+      </p>
+    </div>
+
+    <!-- Mostrar los pasos con sus respectivas imágenes -->
+    <div *ngFor="let paso of pasos; let i = index" class="step-container">
+      <img
+        [src]="imagenes[i]"
+        alt="Paso {{ i + 1 }}"
+        class="step-image mb-2 rounded shadow-sm"
+      />
+      <p class="text-start step-text"><b>Paso {{ i + 1 }}:</b> {{ paso }}</p>
+    </div>
+
+    <!-- Mensaje final -->
+    <div class="text-center mt-4">
+      <p class="text-secondary fw-bold">
+        Una vez completados los pasos, proceda a publicar.
+      </p>
+    </div>
   </div>
 </ion-content>

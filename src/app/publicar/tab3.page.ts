@@ -8,13 +8,12 @@ import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import {
   AlertController,
+  LoadingController,
   ModalController,
   ToastController,
 } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
-import { Diagnostic } from '@awesome-cordova-plugins/diagnostic/ngx';
-import { Platform } from '@ionic/angular';
-import { UbicacionModalComponent } from '../ubicacion-modal/ubicacion-modal.component';
+
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -27,9 +26,11 @@ export class Tab3Page implements OnInit {
   generosFiltrados: string[] = [];
   mostrarSugerenciasGenero = false;
   mostrarSugerenciasAutor = false;
+
   correo: string = '';
   celular: string = '+56';
   user: any;
+
   maxYear = new Date().getFullYear().toString();
   minYear = '1900';
   imagePreviewUrls: string[] = [];
@@ -42,12 +43,13 @@ export class Tab3Page implements OnInit {
     estado: '',
     correoelectronico: '',
     telefono: '',
-    precio: 0,
+    precio: null as number | null, // Solo números, inicializado como null
     descripcion: '',
     anio: 0,
     esFavorito: false,
     coordenadas: { lat: 0, lng: 0 },
   };
+
   fotos: File[] = []; // Array para almacenar las fotos seleccionadas
 
   constructor(
@@ -60,7 +62,8 @@ export class Tab3Page implements OnInit {
     private toastController: ToastController,
     private imageUploadService: ImageUploadService,
     private http: HttpClient,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {
@@ -73,13 +76,15 @@ export class Tab3Page implements OnInit {
     this.cargarAutores();
     this.cargarGeneros();
   }
+
   async loadUserData(userId: string) {
     const usuario = await this.usuarioService.getUsuario(userId);
     if (usuario) {
-      this.correo = usuario.correo;
-      this.celular = usuario.celular;
+      this.correo = usuario.correo || ''; // Inicializa solo si existe
+      this.celular = usuario.celular || '+56'; // Default si no existe
     }
   }
+
   cargarAutores() {
     this.http.get<string[]>('/assets/autor.json').subscribe((data) => {
       this.autores = data;
@@ -125,13 +130,12 @@ export class Tab3Page implements OnInit {
     this.publicacion.autor = autor;
     this.mostrarSugerenciasAutor = false;
   }
+
   onYearChange(event: any) {
-    // Extract only the year from the datetime value
     const fullDate = event.detail.value;
     this.publicacion.anio = parseInt(fullDate.split('-')[0], 10);
   }
 
-  // Validación del campo "Año" para asegurarse de que no exceda los 4 dígitos
   validateLength(event: any) {
     const input = event.target.value;
     if (input.length > 4) {
@@ -139,11 +143,17 @@ export class Tab3Page implements OnInit {
     }
   }
 
-  // Evento para manejar la selección de imágenes
+  onPrecioChange(event: any) {
+    const inputValue = event.target.value;
+    if (!/^\d*$/.test(inputValue)) {
+      event.target.value = inputValue.replace(/\D/g, ''); // Eliminar caracteres no numéricos
+    }
+    this.publicacion.precio = parseInt(event.target.value, 10) || null; // Evitar que sea 0 al inicio
+  }
+
   onFilesSelected(event: any) {
     const files = event.target.files;
     if (files) {
-      // Limit to 5 images
       const remainingSlots = 3 - this.imagePreviewUrls.length;
       const filesToAdd = Array.from(files).slice(0, remainingSlots) as File[];
 
@@ -162,89 +172,65 @@ export class Tab3Page implements OnInit {
     this.imagePreviewUrls.splice(index, 1);
     this.selectedFiles.splice(index, 1);
   }
- 
 
   async guardarPublicacion() {
-    const { 
-      titulolibro, 
-      autor, 
-      genero, 
-      estado, 
-      correoelectronico, 
-      telefono, 
-      precio, 
-      descripcion, 
-      anio, 
-      esFavorito 
+    const {
+      titulolibro,
+      autor,
+      genero,
+      estado,
+      correoelectronico,
+      telefono,
+      precio,
+      descripcion,
+      anio,
+      esFavorito,
     } = this.publicacion;
-  
+
+    const loading = await this.showLoading();
     try {
       if (this.selectedFiles.length === 0) {
+        loading.dismiss();
         this.mostrarToast('Debe seleccionar al menos una imagen');
         return;
       }
-  
-      let coordenadas = null;
-      let reintentar = true;
-      let intentos = 0;
-      const maxIntentos = 3;
-  
-      while (!coordenadas && reintentar && intentos < maxIntentos) {
-        try {
-          intentos++;
-          coordenadas = await this.geocodingService.obtenerUbicacion();
-          if (!coordenadas || !coordenadas.lat || !coordenadas.lng) {
-            throw new Error('Coordenadas inválidas');
-          }
-        } catch (error: any) {
-          if (error.message.includes('denied') || error.code === 1) {
-            console.warn('Permiso de geolocalización denegado');
-            reintentar = await this.mostrarModalUbicacion();
-          } else {
-            console.error('Error al obtener ubicación:', error);
-            throw new Error('No se pudo obtener la ubicación.');
-          }
-        }
-      }
-  
-      if (!coordenadas) {
-        console.warn('Publicación cancelada debido a falta de permisos o demasiados intentos fallidos.');
-        return;
-      }
-  
+
+      let coordenadas = await this.geocodingService.obtenerUbicacion();
       const publicacionId = await this.publicacionService.crearPublicacion(
-        titulolibro, autor, genero, estado, correoelectronico, telefono, precio, descripcion, anio, esFavorito, coordenadas
+        titulolibro,
+        autor,
+        genero,
+        estado,
+        correoelectronico,
+        telefono,
+        precio!,
+        descripcion,
+        anio,
+        esFavorito,
+        coordenadas
       );
-      console.log('Publicación creada con éxito');
-  
-      // Resolver el Promise antes de usar filter
-      const imagenesUrl = (await Promise.all(
-        this.selectedFiles.map(async (file, index) => {
-          try {
+
+      const imagenesUrl = (
+        await Promise.all(
+          this.selectedFiles.map(async (file, index) => {
             const filePath = `postImg/${this.auth.currentUser?.uid}/${publicacionId}/imagen_${index}`;
             return await this.imageUploadService.uploadImage(file, filePath).toPromise();
-          } catch (error) {
-            console.error(`Error al subir la imagen ${index}:`, error);
-            return null; // Manejar errores individuales de subida
-          }
-        })
-      )).filter((url: string | null | undefined): url is string => url !== null && url !== undefined);
-  
+          })
+        )
+      ).filter((url: string | null | undefined): url is string => !!url);
+
       await this.publicacionService.actualizarPublicacion(publicacionId, { imagenesUrl });
-  
+
       this.resetForm();
+      loading.dismiss();
       this.mostrarToast('Publicación creada exitosamente');
-  
-      // Redirigir a la página de publicaciones del usuario
-      this.router.navigate(['/tab2']);
+      this.router.navigate(['/tabs/tab2']);
     } catch (error) {
-      console.error('Error al guardar la publicación: ', error);
+      loading.dismiss();
       this.mostrarToast('Error al crear la publicación');
     }
   }
-  
-  
-  // Método para reiniciar el formulario
+
   resetForm() {
     this.publicacion = {
       titulolibro: '',
@@ -253,17 +239,16 @@ export class Tab3Page implements OnInit {
       estado: '',
       correoelectronico: '',
       telefono: '',
-      precio: 0,
+      precio: null,
       descripcion: '',
       anio: 0,
       esFavorito: false,
       coordenadas: { lat: 0, lng: 0 },
     };
-    // Limpiar las imágenes seleccionadas y las previsualizaciones
     this.selectedFiles = [];
     this.imagePreviewUrls = [];
   }
-  // Método para mostrar el toast
+
   async mostrarToast(mensaje: string) {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -273,18 +258,12 @@ export class Tab3Page implements OnInit {
     toast.present();
   }
 
-  async mostrarModalUbicacion(): Promise<boolean> {
-    const modal = await this.modalController.create({
-      component: UbicacionModalComponent,
+  async showLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Espere un momento',
+      spinner: 'crescent',
     });
-    await modal.present();
-  
-    // Manejo del resultado del modal
-    const { data } = await modal.onDidDismiss();
-    return data ? data.reintentar : false;
+    await loading.present();
+    return loading;
   }
-  
-  
-  
-  
 }

@@ -1,59 +1,70 @@
-.ion-color-readcyclecolor {
-	--ion-color-base: var(--ion-color-readcyclecolor);
-	--ion-color-base-rgb: var(--ion-color-readcyclecolor-rgb);
-	--ion-color-contrast: var(--ion-color-readcyclecolor-contrast);
-	--ion-color-contrast-rgb: var(--ion-color-readcyclecolor-contrast-rgb);
-	--ion-color-shade: var(--ion-color-readcyclecolor-shade);
-	--ion-color-tint: var(--ion-color-readcyclecolor-tint);
-}
-
-.edit-icon {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	z-index: 1;
-	padding: 6px;  /* Ajuste más pequeño para que quede más elegante */
-	transition: all 0.3s ease-in-out; /* Transición suave */
+/* General */
+.publicaciones-list {
+	max-width: 600px;
+	margin: 0 auto;
   }
-  .icon-container {
-	position: relative;
-	width: 80px;
-	height: 80px;
-	margin: 0 auto 20px;
+  
+  .card-publicacion {
+	display: flex;
+	position: relative; /* Contenedor relativo para los elementos absolutos dentro */
+	margin-bottom: 15px;
+	border-radius: 12px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
   }
-  .main-icon {
-	width: 100%;
-	height: 100%;
+  
+  .card-content {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+  }
+  
+  /* Imagen del libro */
+  .image-container {
+	flex-shrink: 0;
+  }
+  
+  .main-image {
+	width: 100px;
+	height: 120px;
+	object-fit: cover;
+	border-radius: 8px;
+  }
+  
+  .no-image {
+	width: 100px;
+	height: 120px;
 	background-color: var(--ion-color-light);
-	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-  }
-  .main-icon ion-icon {
-	font-size: 48px;
+	border-radius: 8px;
 	color: var(--ion-color-medium);
   }
-  .sub-icon {
-	position: absolute;
-	bottom: -8px;
-	right: -8px;
-	background-color: var(--ion-color-light);
-	border-radius: 50%;
-	padding: 8px;
-	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+/* Contenedor para la cabecera */
+.header-container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between; /* Distribuye título y botón */
+	width: 100%; /* Asegura que ocupe todo el ancho */
   }
-  .sub-icon ion-icon {
-	font-size: 20px;
-	color: var(--ion-color-danger);
+  
+  /* Títulos dentro de la cabecera */
+  .header-container div {
+	flex-grow: 1; /* Permite que el texto del título use el espacio disponible */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
   }
-  h2 {
-	font-size: 20px;
-	font-weight: bold;
-	margin-bottom: 10px;
+  
+  /* Botón de edición */
+  .edit-icon {
+	position: absolute; /* Posiciona el botón de manera absoluta dentro de la tarjeta */
+	top: 10px; /* Ajusta esta distancia para acercarlo a la parte superior */
+	right: 10px; /* Ajusta esta distancia para colocarlo cerca del borde derecho */
+	z-index: 1; /* Asegura que esté por encima de otros elementos */
   }
-  p {
-	color: var(--ion-color-medium);
-	margin-bottom: 20px;
-  }
-
+  

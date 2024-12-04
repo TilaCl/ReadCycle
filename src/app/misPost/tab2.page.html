@@ -1,70 +1,78 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="readcyclecolor">
-    <ion-title>
-      Mis Publicaciones
-    </ion-title>
+    <ion-title>Mis Publicaciones</ion-title>
   </ion-toolbar>
-
-  
 </ion-header>
 
 <ion-content class="ion-padding">
-
-    <!-- Condición para mostrar un mensaje si no hay favoritos -->
-    <div *ngIf="!(publicaciones$ | async)?.length; else misPost" style="text-align: center; margin-top: 20px;">
-      <ion-card class="ion-text-center">
-        <ion-card-content>
-          <div class="icon-container">
-            <div class="main-icon">
-              <ion-icon name="book-outline" size="large"></ion-icon>
-            </div>
-            <div class="sub-icon">
-              <ion-icon name="albums-outline"></ion-icon>
-            </div>
+  <!-- Mostrar mensaje si no hay publicaciones -->
+  <div *ngIf="!(publicaciones$ | async)?.length; else misPost" class="empty-container">
+    <ion-card class="ion-text-center empty-card">
+      <ion-card-content>
+        <div class="icon-container">
+          <div class="main-icon">
+            <ion-icon name="book-outline" color="danger" size="large"></ion-icon>
           </div>
-          <h2>Tu estantería de libros está vacía</h2>
-          <p>
-            Aún no has publicado algún libro. ¡Regala conocimiento y aventuras publicando libros!
-          </p>
-          <ion-button color="readcyclecolor" expand="block" (click)="creaLibros()">
-            Vamos a publicar
-            <ion-icon   name="paper-plane-outline" slot="end"></ion-icon>
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </div>
-
-<ng-template #misPost>
-  <ion-list>
-    <ion-card *ngFor="let publicacion of publicaciones$ | async" (click)="abrirModal(publicacion)"  class="card-detalles">
-      <ion-card-header>
-        <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
-        <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
-      </ion-card-header>
-
-      <!-- Carrusel de imágenes usando Swiper -->
-      <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="swiper-container">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide" *ngFor="let imagenUrl of publicacion.imagenesUrl">
-            <img [src]="imagenUrl" alt="Imagen del libro" style="width: 100%; height: 150px; object-fit: cover;" />
+          <div class="sub-icon">
+            <ion-icon name="albums-outline"></ion-icon>
           </div>
         </div>
-        <!-- Paginación del carrusel -->
-        <div class="swiper-pagination"></div>
-      </div>
-
-      <!-- Mostrar icono si no hay imágenes o si imagenesUrl no existe -->
-      <ng-template #noImages>
-        <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-          <ion-icon name="image-outline" size="large"></ion-icon>
-        </div>
-      </ng-template>
-
-      <!-- Icono de edición en la esquina superior derecha -->
-      <ion-button fill="clear" color="readcyclecolor" size="small" (click)="editarPublicacion(publicacion, $event)" class="edit-icon">
-        <ion-icon name="create-outline" size="large"></ion-icon>
-      </ion-button>
+        <h1 class="text bold">Tu estantería de libros está vacía</h1>
+        <p>
+          Aún no has publicado algún libro. 
+        </p>
+        <p>¡Regala conocimiento y aventuras publicando libros!</p>
+        <ion-button color="readcyclecolor" expand="block" (click)="creaLibros()">
+          Vamos a publicar
+          <ion-icon name="paper-plane-outline" slot="end"></ion-icon>
+        </ion-button>
+      </ion-card-content>
     </ion-card>
-  </ion-list>
+  </div>
+
+  <!-- Mostrar lista de publicaciones -->
+  <ng-template #misPost>
+    <ion-list class="publicaciones-list">
+      <ion-card
+      *ngFor="let publicacion of publicaciones$ | async"
+      (click)="abrirModal(publicacion)"
+      class="card-publicacion"
+    >
+      <ion-button
+        fill="clear"
+        color="readcyclecolor"
+        size="small"
+        (click)="editarPublicacion(publicacion, $event)"
+        class="edit-icon"
+      >
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+    
+      <div class="card-content">
+        <!-- Imagen del libro -->
+        <div *ngIf="publicacion.imagenesUrl && publicacion.imagenesUrl.length > 0; else noImages" class="image-container">
+          <img [src]="publicacion.imagenesUrl[0]" alt="Imagen del libro" class="main-image" />
+        </div>
+    
+        <!-- Icono si no hay imágenes -->
+        <ng-template #noImages>
+          <div class="no-image">
+            <ion-icon name="image-outline" size="large"></ion-icon>
+          </div>
+        </ng-template>
+    
+        <!-- Información del libro -->
+        <ion-card-header>
+          <div class="header-container">
+            <div>
+              <ion-card-title>{{ publicacion.titulolibro }}</ion-card-title>
+              <ion-card-subtitle>{{ publicacion.autor }} - {{ publicacion.genero }}</ion-card-subtitle>
+            </div>
+          </div>
+        </ion-card-header>
+      </div>
+    </ion-card>
+    
+    </ion-list>
   </ng-template>
 </ion-content>
