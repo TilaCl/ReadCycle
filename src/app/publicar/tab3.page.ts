@@ -206,6 +206,7 @@ export class Tab3Page implements OnInit {
       if (!titulolibro || !autor || !genero || !estado || !correoelectronico || !telefono || !precio || !descripcion || !anio) {
         loading.dismiss();
         this.mostrarToast('Por favor, completa todos los campos requeridos.');
+        loading.dismiss();
         return;
       }
   
@@ -219,9 +220,11 @@ export class Tab3Page implements OnInit {
       let coordenadas = null;
       try {
         coordenadas = await this.geocodingService.obtenerUbicacion();
+        
       } catch (error) {
         console.warn('No se pudo obtener la ubicación automática, solicitando manualmente.');
         const reintentar = await this.mostrarModalUbicacion();
+        loading.dismiss();
         if (!reintentar) {
           loading.dismiss();
           return;
@@ -251,6 +254,7 @@ export class Tab3Page implements OnInit {
             return await this.imageUploadService.uploadImage(file, filePath).toPromise();
           } catch (error) {
             console.error(`Error al subir la imagen ${index}:`, error);
+            loading.dismiss();
             return null; // Evitar errores por imágenes fallidas
           }
         })
@@ -258,6 +262,7 @@ export class Tab3Page implements OnInit {
   
       if (imagenesUrl.length === 0) {
         throw new Error('Error al subir las imágenes. Inténtalo nuevamente.');
+        loading.dismiss();
       }
   
       // Actualizar publicación con las URLs de las imágenes
@@ -269,6 +274,7 @@ export class Tab3Page implements OnInit {
       this.mostrarToast('Publicación creada exitosamente');
       this.router.navigate(['/tabs/tab2']);
     } catch (error) {
+      
       console.error('Error al guardar la publicación: ', error);
       loading.dismiss();
       this.mostrarToast('Error al crear la publicación. Inténtalo nuevamente.');
@@ -306,6 +312,7 @@ export class Tab3Page implements OnInit {
     const modal = await this.modalController.create({
       component: UbicacionModalComponent,
     });
+    
     await modal.present();
   
     // Manejo del resultado del modal
@@ -317,6 +324,7 @@ export class Tab3Page implements OnInit {
     const loading = await this.loadingController.create({
       message: 'Espere un momento',
       spinner: 'crescent',
+      duration: 2000,
     });
     await loading.present();
     return loading;
