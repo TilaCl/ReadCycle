@@ -75,17 +75,7 @@
       <br />
       <!-- Botón y Action Sheet para Donar -->
       <div class="paypal" id="paypal-button-container-1"></div>
-      <p style="font-size: medium;">¡Elimina anuncios!</p>
-      <div style="margin-top: 20px;">
-        <h1 *ngIf="user?.haDonado; else noDonationMessage">¡Gracias por tu donación! 🙌</h1>
-        <ng-template #noDonationMessage>
-          <h1>Aún no has donado. 💚</h1>
-          <p>
-            haDonado : {{ user.haDonado }}
-          </p>
-          
-        </ng-template>
-      </div>
+      <p style="font-size: medium;">¡Si nos quieres apoyar y ayudar a mantener la aplicación activa puedes donarnos!</p>
       <!-- Botón para cerrar sesión -->
       <ion-button (click)="logout()" color="readcyclecolor" style="padding: 5%;">
         Cerrar Sesión
