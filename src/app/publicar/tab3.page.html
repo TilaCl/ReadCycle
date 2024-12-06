@@ -8,7 +8,7 @@
 
 <ion-content class="ion-padding">
   <div class="form-container">
-    <form (ngSubmit)="guardarPublicacion()" class="publication-form">
+    <form (ngSubmit)="guardarPublicacion()" class="publication-form" #publicacionForm="ngForm">
       <!-- Sección de Imágenes -->
       <div class="upload-section ion-margin-bottom">
         <ion-label class="section-title">Imágenes del Libro</ion-label>
@@ -42,6 +42,7 @@
           <ion-input 
             label="Título del libro" 
             labelPlacement="floating" 
+            #name="ngModel"
             [(ngModel)]="publicacion.titulolibro" 
             name="titulolibro" 
             required
@@ -54,6 +55,7 @@
             <ion-input 
               label="Género" 
               labelPlacement="floating"
+              #name="ngModel"
               [(ngModel)]="publicacion.genero" 
               name="genero" 
               (ionInput)="filtrarGeneros($event)"
@@ -72,6 +74,7 @@
             <ion-input 
               label="Autor" 
               labelPlacement="floating"
+              #name="ngModel"
               [(ngModel)]="publicacion.autor" 
               name="autor" 
               (ionInput)="filtrarAutores($event)"
@@ -126,13 +129,18 @@
             labelPlacement="floating" 
             type="email" 
             placeholder="email@dominio.com" 
+            #correoInput="ngModel"
             [(ngModel)]="publicacion.correoelectronico" 
             name="correoelectronico" 
             required
             class="custom-input"
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
             [value]="correo">
           </ion-input>
         </ion-item>
+        <ion-text *ngIf="correoInput.invalid && correoInput.touched" color="danger">
+          Ingrese un correo válido.
+        </ion-text>
 
         <ion-item class="custom-item">
           <ion-input 
@@ -140,6 +148,7 @@
             labelPlacement="floating" 
             type="tel" 
             placeholder="+569 xxxxxxxx" 
+            #telefonoInput="ngModel"
             [(ngModel)]="publicacion.telefono" 
             name="telefono" 
             required 
@@ -148,24 +157,33 @@
             [value]="celular">
           </ion-input>
         </ion-item>
+        <ion-text *ngIf="telefonoInput.invalid && telefonoInput.touched" color="danger">
+          Ingrese un número válido en formato +569xxxxxxxx.
+        </ion-text>
 
         <ion-item class="custom-item">
           <ion-input 
             label="Precio (CLP)" 
-            labelPlacement="floating"
+            labelPlacement="floating" 
             type="number" 
+            #precioInput="ngModel"
             [(ngModel)]="publicacion.precio" 
             name="precio" 
             required
+            min="1"
             class="custom-input">
           </ion-input>
         </ion-item>
+        <ion-text *ngIf="precioInput.invalid && precioInput.touched" color="danger">
+          El precio debe ser mayor a 0.
+        </ion-text>
 
         <ion-item class="custom-item">
           <ion-textarea 
             label="Descripción" 
             labelPlacement="floating" 
             autoGrow="true" 
+            #name="ngModel"
             [(ngModel)]="publicacion.descripcion" 
             name="descripcion" 
             required
@@ -175,14 +193,15 @@
       </div>
 
       <ion-button 
-        expand="block" 
-        shape="round" 
-        color="readcyclecolor" 
-        type="submit"
-        class="submit-button ion-margin-top">
-        <ion-icon name="send-outline" slot="start"></ion-icon>
-        Publicar Libro
-      </ion-button>
+      expand="block" 
+      shape="round" 
+      color="readcyclecolor" 
+      type="submit"
+      class="submit-button ion-margin-top" 
+      [disabled]="!publicacionForm.valid">
+      <ion-icon name="send-outline" slot="start"></ion-icon>
+      Publicar Libro
+    </ion-button>
     </form>
   </div>
 </ion-content>
