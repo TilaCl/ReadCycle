@@ -3,6 +3,8 @@
 **ReadCycle** es un marketplace pensado para conectar a lectores que desean vender, intercambiar o comprar libros de segunda mano. Conectamos a las personas directamente a través de WhatsApp o correo electrónico, haciendo el proceso simple y sin complicaciones. 🌟
 
 ---
+Prueba la app!!!
+https://readcycle-ten.vercel.app/
 
 ## 🚀 Funcionalidades Principales
 
@@ -20,9 +22,7 @@ El diseño de **ReadCycle** es intuitivo y amigable, utilizando colores que refl
 - Color principal: **#E7AB6F** 🍂  
   *(Un tono cálido que representa cercanía y confort para los usuarios.)*
 
-Ejemplo de la interfaz:
 
-![Ejemplo de Interfaz](https://ibb.co/QbNDSSr))
 
 ---
 
